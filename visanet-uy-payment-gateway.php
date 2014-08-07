@@ -25,7 +25,7 @@ function woocommerce_visanetuy_init(){
 			$this->id 					= 'VisaNetUY';
 			$this->medthod_title 		= 'VisaNet UY';
 			$this->medthod_description 	= 'VisaNet UY';
-			$this->has_fields 			= true;
+			$this->has_fields 			= false;
 
 			$this->init_form_fields();
 			$this->init_settings();
@@ -48,7 +48,7 @@ function woocommerce_visanetuy_init(){
 				$this->log = new WC_Logger();
 			}
  
- 			// Actions
+ 			// Actions / Acciones
 
 			add_action( 'woocommerce_receipt_visanetuy', array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -61,14 +61,15 @@ function woocommerce_visanetuy_init(){
    		}
 
 		/**
-		 * Check if this gateway is enabled and available in the user's country
-		 *
+		 * Check if this gateway is enabled and if the required fields have been filled. 
+		 * Chequear si el gateway esta habilitado y si los campos requeridos han sido completados.
 		 * @access public
 		 * @return bool
 		 */
 		function is_valid_for_use() {
-
-
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Chequeando si los campos requeridos han sido llenados y si es valido la configuracion. ' );
+			}
 			if ( empty($this->idacquirer) || empty($this->idcommerce) || empty($this->vector) || empty($this->llavePublica) || empty($this->llavePrivada) ) {
 				return false;
 			}
@@ -150,23 +151,27 @@ function woocommerce_visanetuy_init(){
 	        echo '</table>'; 
     	}
  
-	    /**
-	     *  There are no payment fields for visanetuy, but we want to show the description if set.
-	     **/
-	    function payment_fields(){
-	        if($this->description) echo wpautop(wptexturize($this->description));
-	    }
-	
-	    /**
-	     * Receipt Page
-	     **/
-    	function receipt_page($order){
-        	echo '<p>'.__('Thank you for your order, please click the button below to pay with VisaNet UY.', 'woocommerce').'</p>';
-        	echo $this->generate_visanetuy_form($order);
+
+		/**
+		 * Output for the order received page.
+		 *
+		 * @access public
+		 * @return void
+		 */
+    	function receipt_page( $order ){
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Mostrando pagina de recibo ' . $order->get_order_number() );
+			}
+        	echo '<p>' . __('Thank you for your order, please click the button below to pay with VisaNet UY.', 'woocommerce').'</p>';
+        	echo $this->generate_visanetuy_form( $order );
     	}
 
 
     	function get_array_send($order, $txnid){
+
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Generando array_send ' . $order->get_order_number() . ' - ' . $txnid );
+			}
 
 	        $array_send['acquirerId'] 				= $this->idacquirer;
 	        $array_send['commerceId'] 				= $this->idcommerce;
@@ -193,6 +198,10 @@ function woocommerce_visanetuy_init(){
 
     	function get_array_get( $order ){
 
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Generando array_get ' . $order->get_order_number() );
+			}
+
 			$array_get['XMLREQ']="";
 			$array_get['DIGITALSIGN']="";
 			$array_get['SESSIONKEY']=""; 
@@ -208,20 +217,21 @@ function woocommerce_visanetuy_init(){
 	     * Generate visanetuy button link
 	     **/
 	    public function generate_visanetuy_form($order_id){
-
+ 
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Generating payment form for order ' . $order->get_order_number() . '.');
+				$this->log->add( 'visanet', 'Generando formulario de orden for order ' . $order_id->get_order_number() );
 			}
-	 
-	        global $woocommerce;
-	 
+
 	        $order = new WC_Order($order_id);
+
+			if ( 'yes' == $this->testmode ) {
+				$visanet_adr = $this->testurl;
+			} else {
+				$visanet_adr = $this->liveurl;
+			}
+
 	        $txnid = $order_id.'_'.date("ymds");
-	 
-	        $redirect_url = ($this -> redirect_page_id=="" || $this -> redirect_page_id==0)?get_site_url() . "/":get_permalink($this -> redirect_page_id);
-	 
-	        $productinfo = "Order $order_id";
-	 
+	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
 	 		$array_get 	= $this->get_array_get( $order ); 
@@ -251,9 +261,9 @@ function woocommerce_visanetuy_init(){
 				jQuery("#submit_visanetuy_payment_form").click();
 			');
 
-        	return '<form action="' . $this -> testurl . '" method="post" id="visanetuy_payment_form">
-	            <input type="hidden" name="IDACQUIRER" value="' . $this -> idacquirer . '"/>
-	            <input type="hidden" name="IDCOMMERCE" value="' . $this -> idcommerce . '"/>
+        	return '<form action="' . $visanet_adr . '" method="post" id="visanetuy_payment_form">
+	            <input type="hidden" name="IDACQUIRER" value="' . $this->idacquirer . '"/>
+	            <input type="hidden" name="IDCOMMERCE" value="' . $this->idcommerce . '"/>
 	            <input type="hidden" name="XMLREQ" value="' . $array_get['XMLREQ'] . '"/>
 	            <input type="hidden" name="DIGITALSIGN" value="' . $array_get['DIGITALSIGN'] . '"/>
 	            <input type="hidden" name="SESSIONKEY" value="' . $array_get['SESSIONKEY'] .'"/>
@@ -266,18 +276,27 @@ function woocommerce_visanetuy_init(){
 	     **/
 	    function process_payment($order_id){
 
-	    	global $woocommerce;
-	        $order = new WC_Order( $order_id );
-			// Reduce stock levels
-			//$order->reduce_order_stock();
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Procesando pago ' . $order_id );
+			}
 
-			// Remove cart
-			//$woocommerce->cart->empty_cart();
+			$order = new WC_Order( $order_id );
 
-	        return array(
-	        	'result' => 'success', 
-	        	'redirect' => $order->get_checkout_payment_url( true )
-	        );
+			$visanet_args = $this->get_array_get( $order );
+
+			$visanet_args = http_build_query( $visanet_args, '', '&' );
+
+			if ( 'yes' == $this->testmode ) {
+				$visanet_adr = $this->testurl;
+			} else {
+				$visanet_adr = $this->liveurl;
+			}
+
+			return array(
+				'result' 	=> 'success',
+				'redirect'	=> $visanet_adr . '?' . $visanet_args
+			);
+
 	    }
  
 	    /**
@@ -291,11 +310,15 @@ function woocommerce_visanetuy_init(){
 	    }
  
 	    function showMessage($content){
-	            return '<div class="box '.$this -> msg['class'].'-box">'.$this -> msg['message'].'</div>'.$content;
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Mostrando mensaje:  ' . $content );
+			}
+            return '<div class="box '.$this->msg['class'].'-box">'.$this->msg['message'].'</div>'.$content;
         }
     
 	    // get all pages
 	    function get_pages($title = false, $indent = true) {
+
 	        $wp_pages = get_pages('sort_column=menu_order');
 	        $page_list = array();
 	        if ($title) $page_list[] = $title;

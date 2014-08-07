@@ -162,33 +162,19 @@
 
 	function VPOSSend($arrayIn,&$arrayOut,$llavePublicaCifrado,$llavePrivadaFirma,$VI){
 
-
-
 		$veractual = phpversion();
 
-
-
 		if(version_compare($veractual,"5.0")<0){
-
 			die('PHP version is '.$veractual.'and should be >=5.0');
-
-
 		}
 
 		$xmlSalida = createXMLPHP5($arrayIn);
 
-
-
 		//Genera la firma Digital
-
 		$firmaDigital = BASE64URL_digital_generate($xmlSalida,$llavePrivadaFirma);
-
-
 
 		//Ya se genero el XML y se genera la llave de sesion
 		$llavesesion = generateSessionKey();
-
-
 
 		//Se cifra el XML con la llave generada
 		$xmlCifrado = BASE64URL_symmetric_cipher($xmlSalida,$llavesesion,$VI);
@@ -196,11 +182,9 @@
 		if(!$xmlCifrado) return null;
 
 		//Se cifra la llave de sesion con la llave publica dada
-
 		$llaveSesionCifrada = BASE64URLRSA_encrypt($llavesesion,$llavePublicaCifrado);
 
 		if(!$llaveSesionCifrada) return null;
-
 
 		if(!$firmaDigital) return null;
 
