@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 Plugin Name: WooCommerce VisaNetUY Payment Gateway
 Plugin URI: http://www.tora-soft.com
 Description: VisaNetUY Payment gateway for woocommerce
-Version: 0.1
+Version: 0.1.0
 Author: Federico Giust
 Author URI: http://www.tora-soft.com
 */
@@ -49,7 +49,7 @@ function woocommerce_visanetuy_init(){
 			}
  
  			// Actions / Acciones
-
+			
 			add_action( 'woocommerce_receipt_visanetuy', array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 			add_action( 'woocommerce_thankyou_visanet', array( $this, 'visanet_return_handler' ) );
@@ -89,12 +89,12 @@ function woocommerce_visanetuy_init(){
                 'title' => array(
                     'title'  	  => __('Titulo:', 'woocommerce'),
                     'type'		  => 'text',
-                    'description' => __('Esto controla lo que el usuario ve durante el checkout.', 'woocommerce'),
+                    'description' => __('Nombre del metodo de pago como lo ve el usuario.', 'woocommerce'),
                     'default'     => __('VisaNetUY', 'woocommerce')),
                 'description' => array(
                     'title'       => __('Description:', 'woocommerce'),
                     'type'        => 'textarea',
-                    'description' => __('Esto controla la descripcion de lo que ve el usuario durante el checkout.', 'woocommerce'),
+                    'description' => __('Esto controla la descripción del metodo de pago que ve el usuario durante el checkout.', 'woocommerce'),
                     'default'     => __('Pague seguro con tarjeta de credito o de debito a travez de VisaNet.', 'woocommerce')),
                 'idacquirer' => array(
                     'title'       => __('ID Acquirer', 'woocommerce'),
@@ -107,22 +107,22 @@ function woocommerce_visanetuy_init(){
                 'vector' => array(
                     'title' 	  => __('Vector de inicializacion', 'woocommerce'),
                     'type' 		  => 'text',
-                    'description' =>  __('Este dato es proporcionado por VisaNet.', 'woocommerce'),
+                    'description' =>  __('Este dato es generado por el comercio, cadena alfanumerica (0 - 9 y a - f) de un máximo de 16 caracteres.', 'woocommerce'),
                 ),
                 'llavePublica' => array(
                     'title'  	  => __('Llave publica', 'woocommerce'),
                     'type' 		  => 'textarea',
-                    'description' =>  __('Este dato es proporcionado por VisaNet.', 'woocommerce'),
+                    'description' =>  __('Esta llave es proporcionado por VisaNet.', 'woocommerce'),
                 ),
                 'llavePrivada' => array(
                     'title'  	  => __('Llave privada', 'woocommerce'),
                     'type' 		  => 'textarea',
-                    'description' =>  __('Este dato es proporcionado por VisaNet.', 'woocommerce'),
+                    'description' =>  __('Esta llave es generada por el comercio, como lo indica en la guia provista por VisaNet.', 'woocommerce'),
                 ),
                 'redirect_page_id' => array(
                     'title' 	  => __('Return Page'),
                     'type'  	  => 'select',
-                    'options' 	  => $this -> get_pages('Select Page'),
+                    'options' 	  => $this->get_pages('Select Page'),
                     'description' => "URL of success page"
                 ),
 	 			'testmode' => array(
@@ -137,7 +137,7 @@ function woocommerce_visanetuy_init(){
 					'type'        => 'checkbox',
 					'label'       => __( 'Habilitar logging', 'woocommerce' ),
 					'default'     => 'no',
-					'description' => sprintf( __( 'habilitar Log', 'woocommerce' ), sanitize_file_name( wp_hash( 'visanet' ) ) ),
+					'description' => sprintf( __( 'Habilitar Log. Se guardan en <code>woocommerce/logs/visanet-%s.txt</code>', 'woocommerce' ), sanitize_file_name( wp_hash( 'visanet' ) ) ),
 				)
             );
     	}
@@ -236,7 +236,7 @@ function woocommerce_visanetuy_init(){
 
 	 		$array_get 	= $this->get_array_get( $order ); 
 
- 			VPOSSend( $array_send, $array_get, $this->llavePublica, $this->llavePrivada, $this->vector );
+ 			VPOSSend( $array_send, $array_get, $this->llavePublica, $this->llavePrivada, substr($this->vector, 0, 16) );
 
 			wc_enqueue_js( '
 				$.blockUI({
