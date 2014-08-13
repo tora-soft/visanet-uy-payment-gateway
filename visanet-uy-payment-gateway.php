@@ -294,7 +294,7 @@ function woocommerce_visanetuy_init(){
 
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> $visanet_adr . '?' . $visanet_args
+				'redirect'	=> $order->get_checkout_payment_url( true )
 			);
 
 	    }
