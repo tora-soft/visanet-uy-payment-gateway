@@ -10,9 +10,9 @@ Version: 0.1.0
 Author: Federico Giust
 Author URI: http://www.tora-soft.com
 */
-add_action('plugins_loaded', 'woocommerce_visanetuy_init', 0);
+add_action('plugins_loaded', 'woocommerce_visanet_init', 0);
 
-function woocommerce_visanetuy_init(){
+function woocommerce_visanet_init(){
 
 	if(!class_exists('WC_Payment_Gateway')) return;
  
@@ -22,7 +22,7 @@ function woocommerce_visanetuy_init(){
     
     	public function __construct(){
 		
-			$this->id 					= 'visanetuy';
+			$this->id 					= 'visanet';
 			$this->medthod_title 		= 'VisaNet UY';
 			$this->medthod_description 	= 'VisaNet UY';
 			$this->has_fields 			= false;
@@ -50,9 +50,9 @@ function woocommerce_visanetuy_init(){
  
  			// Actions / Acciones
 			
-			add_action( 'woocommerce_receipt_visanetuy', array( $this, 'receipt_page' ) );
+			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-			add_action( 'woocommerce_thankyou_visanet', array( $this, 'visanet_return_handler' ) );
+			add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'visanet_return_handler' ) );
 
 			if ( ! $this->is_valid_for_use() ) {
 				$this->enabled = false;
@@ -163,7 +163,7 @@ function woocommerce_visanetuy_init(){
 				$this->log->add( 'visanet', 'Mostrando pagina de recibo ' . $order->get_order_number() );
 			}
         	echo '<p>' . __('Thank you for your order, please click the button below to pay with VisaNet UY.', 'woocommerce').'</p>';
-        	echo $this->generate_visanetuy_form( $order );
+        	echo $this->generate_visanet_form( $order );
     	}
 
 
@@ -190,7 +190,7 @@ function woocommerce_visanetuy_init(){
 			$array_send['billingLastName']			= $order->billing_last_name; 
 			$array_send['language']					= 'SP'; //En español
 
-			$array_send = apply_filters( 'woocommerce_visanetuy_array_send', $array_send );
+			$array_send = apply_filters( 'woocommerce_visanet_array_send', $array_send );
 
 			return $array_send;
 
@@ -206,7 +206,7 @@ function woocommerce_visanetuy_init(){
 			$array_get['DIGITALSIGN']="";
 			$array_get['SESSIONKEY']=""; 
 
-			$array_get = apply_filters( 'woocommerce_visanetuy_array_get', $array_get );
+			$array_get = apply_filters( 'woocommerce_visanet_array_get', $array_get );
 
 			return $array_get;
 
@@ -214,9 +214,9 @@ function woocommerce_visanetuy_init(){
 
 
 	    /**
-	     * Generate visanetuy button link
+	     * Generate visanet button link
 	     **/
-	    public function generate_visanetuy_form($order_id){
+	    public function generate_visanet_form($order_id){
  
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Generando formulario de orden for order ' . $order_id->get_order_number() );
@@ -258,16 +258,16 @@ function woocommerce_visanetuy_init(){
 							lineHeight:		"24px",
 						}
 					});
-				jQuery("#submit_visanetuy_payment_form").click();
+				jQuery("#submit_visanet_payment_form").click();
 			');
 
-        	return '<form action="' . $visanet_adr . '" method="post" id="visanetuy_payment_form">
+        	return '<form action="' . $visanet_adr . '" method="post" id="visanet_payment_form">
 	            <input type="hidden" name="IDACQUIRER" value="' . $this->idacquirer . '"/>
 	            <input type="hidden" name="IDCOMMERCE" value="' . $this->idcommerce . '"/>
 	            <input type="hidden" name="XMLREQ" value="' . $array_get['XMLREQ'] . '"/>
 	            <input type="hidden" name="DIGITALSIGN" value="' . $array_get['DIGITALSIGN'] . '"/>
 	            <input type="hidden" name="SESSIONKEY" value="' . $array_get['SESSIONKEY'] .'"/>
-	            <input type="submit" class="button-alt" id="submit_visanetuy_payment_form" value="'.__('Pay via VisaNetUY', 'woocommerce').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woocommerce').'</a>
+	            <input type="submit" class="button-alt" id="submit_visanet_payment_form" value="'.__('Pay via VisaNetUY', 'woocommerce').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woocommerce').'</a>
 	            </form>';
 	    }
 
@@ -300,9 +300,9 @@ function woocommerce_visanetuy_init(){
 	    }
  
 	    /**
-	     * Check for valid visanetuy server callback
+	     * Check for valid visanet server callback
 	     **/
-	    function check_visanetuy_response(){
+	    function check_visanet_response(){
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Checking VisaNetUY response is valid.' );
 			}
@@ -770,11 +770,11 @@ function woocommerce_visanetuy_init(){
    	/**
      * Add the Gateway to WooCommerce
      **/
-    function woocommerce_add_visanetuy_gateway($methods) {
+    function woocommerce_add_visanet_gateway($methods) {
         $methods[] = 'WC_VisaNetUY';
         return $methods;
     }
  
-    add_filter('woocommerce_payment_gateways', 'woocommerce_add_visanetuy_gateway' );
+    add_filter('woocommerce_payment_gateways', 'woocommerce_add_visanet_gateway' );
 
 }
