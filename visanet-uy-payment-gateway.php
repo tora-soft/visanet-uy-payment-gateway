@@ -92,7 +92,7 @@ function woocommerce_visanetuy_init(){
                     'description' => __('Nombre del metodo de pago como lo ve el usuario.', 'woocommerce'),
                     'default'     => __('VisaNetUY', 'woocommerce')),
                 'description' => array(
-                    'title'       => __('Description:', 'woocommerce'),
+                    'title'       => __('Descripción:', 'woocommerce'),
                     'type'        => 'textarea',
                     'description' => __('Esto controla la descripción del metodo de pago que ve el usuario durante el checkout.', 'woocommerce'),
                     'default'     => __('Pague seguro con tarjeta de credito o de debito a travez de VisaNet.', 'woocommerce')),
@@ -120,10 +120,10 @@ function woocommerce_visanetuy_init(){
                     'description' =>  __('Esta llave es generada por el comercio, como lo indica en la guia provista por VisaNet.', 'woocommerce'),
                 ),
                 'redirect_page_id' => array(
-                    'title' 	  => __('Return Page'),
+                    'title' 	  => __('Pagina de retorno'),
                     'type'  	  => 'select',
-                    'options' 	  => $this->get_pages('Select Page'),
-                    'description' => "URL of success page"
+                    'options' 	  => $this->get_pages('Por favor elija'),
+                    'description' => "Pagina a mostrar luego de pago existoso."
                 ),
 	 			'testmode' => array(
 					'title'       => __( 'VisaNet Modo de pruebas', 'woocommerce' ),
