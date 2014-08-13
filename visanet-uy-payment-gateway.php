@@ -38,7 +38,7 @@ function woocommerce_visanetuy_init(){
 			$this->llavePublica 		= $this->get_option('llavePublica');
 			$this->llavePrivada 		= $this->get_option('llavePrivada');
 			$this->redirect_page_id 	= $this->get_option('redirect_page_id');
-			$this->testurl 				= 'https://servicios.alignet.com/VPOS/MM/transactionStart20.do';
+			$this->testurl 				= 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do';
 			$this->liveurl 				= 'https://vpayment.verifika.com/VPOS/MM/transactionStart20.do';
 			$this->testmode				= $this->get_option( 'testmode' );
 			$this->debug				= $this->get_option( 'debug' );
