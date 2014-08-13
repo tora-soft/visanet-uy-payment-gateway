@@ -22,7 +22,7 @@ function woocommerce_visanetuy_init(){
     
     	public function __construct(){
 		
-			$this->id 					= 'VisaNetUY';
+			$this->id 					= 'visanetuy';
 			$this->medthod_title 		= 'VisaNet UY';
 			$this->medthod_description 	= 'VisaNet UY';
 			$this->has_fields 			= false;
