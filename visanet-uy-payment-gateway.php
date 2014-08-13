@@ -23,13 +23,18 @@ function woocommerce_visanet_init(){
     	public function __construct(){
 		
 			$this->id 					= 'visanet';
-			$this->medthod_title 		= 'VisaNet UY';
-			$this->medthod_description 	= 'VisaNet UY';
+			$this->medthod_title 		= __( 'VisaNet', 'woocommerce' );
+			$this->order_button_text 	= __( 'Ir a VisaNet', 'woocommerce' );
+			$this->testurl 				= 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do';
+			$this->liveurl 				= 'https://vpayment.verifika.com/VPOS/MM/transactionStart20.do';
+
 			$this->has_fields 			= false;
 
+			// Load the settings.
 			$this->init_form_fields();
 			$this->init_settings();
 
+			// Define user set variables
 			$this->title 				= $this->get_option('title');
 			$this->description 			= $this->get_option('description');
 			$this->idacquirer 			= $this->get_option('idacquirer');
@@ -38,8 +43,6 @@ function woocommerce_visanet_init(){
 			$this->llavePublica 		= $this->get_option('llavePublica');
 			$this->llavePrivada 		= $this->get_option('llavePrivada');
 			$this->redirect_page_id 	= $this->get_option('redirect_page_id');
-			$this->testurl 				= 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do';
-			$this->liveurl 				= 'https://vpayment.verifika.com/VPOS/MM/transactionStart20.do';
 			$this->testmode				= $this->get_option( 'testmode' );
 			$this->debug				= $this->get_option( 'debug' );
 
@@ -267,7 +270,7 @@ function woocommerce_visanet_init(){
 	            <input type="hidden" name="XMLREQ" value="' . $array_get['XMLREQ'] . '"/>
 	            <input type="hidden" name="DIGITALSIGN" value="' . $array_get['DIGITALSIGN'] . '"/>
 	            <input type="hidden" name="SESSIONKEY" value="' . $array_get['SESSIONKEY'] .'"/>
-	            <input type="submit" class="button-alt" id="submit_visanet_payment_form" value="'.__('Pay via VisaNetUY', 'woocommerce').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woocommerce').'</a>
+	            <input type="submit" class="button-alt" id="submit_visanet_payment_form" value="'.__('Pagar a travez de VisaNet', 'woocommerce').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancelar orden &amp; restaurar carro', 'woocommerce').'</a>
 	            </form>';
 	    }
 
