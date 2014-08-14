@@ -16,8 +16,6 @@ function woocommerce_visanet_init(){
 
 	if(!class_exists('WC_Payment_Gateway')) return;
  
-	include("vpos_plugin.php");
-
   	class WC_VisaNetUY extends WC_Payment_Gateway{
     
     	public function __construct(){
@@ -35,17 +33,19 @@ function woocommerce_visanet_init(){
 			$this->init_settings();
 
 			// Define user set variables
-			$this->title 				= $this->get_option('title');
-			$this->description 			= $this->get_option('description');
-			$this->idacquirer 			= $this->get_option('idacquirer');
-			$this->idcommerce 			= $this->get_option('idcommerce');
-			$this->currency_code		= $this->get_option('currency_code');
-			$this->vector 				= $this->get_option('vector');
-			$this->llavePublica 		= $this->get_option('llavePublica');
-			$this->llavePrivada 		= $this->get_option('llavePrivada');
-			$this->redirect_page_id 	= $this->get_option('redirect_page_id');
-			$this->testmode				= $this->get_option( 'testmode' );
-			$this->debug				= $this->get_option( 'debug' );
+			$this->title 						= $this->get_option('title');
+			$this->description 					= $this->get_option('description');
+			$this->idacquirer 					= $this->get_option('idacquirer');
+			$this->idcommerce 					= $this->get_option('idcommerce');
+			$this->currency_code				= $this->get_option('currency_code');
+			$this->vector 						= $this->get_option('vector');
+			$this->llaveVPOSCryptoPublica 		= $this->get_option('llaveVPOSCryptoPublica');
+			$this->llaveVPOSFirmaPublica 		= $this->get_option('llaveVPOSCryptoPublica');
+			$this->llaveComercioCryptoPrivada	= $this->get_option('llaveComercioFirmaPrivada');
+			$this->llaveComercioFirmaPrivada	= $this->get_option('llaveComercioFirmaPrivada');
+			$this->redirect_page_id 			= $this->get_option('redirect_page_id');
+			$this->testmode						= $this->get_option('testmode');
+			$this->debug						= $this->get_option('debug');
 
 			// Logs
 			if ( 'yes' == $this->debug ) {
@@ -77,7 +77,6 @@ function woocommerce_visanet_init(){
 			if ( empty($this->idacquirer) || empty($this->idcommerce) || empty($this->vector) || empty($this->llavePublica) || empty($this->llavePrivada) ) {
 				return false;
 			}
-
 			return true;
 		}
 
@@ -117,13 +116,13 @@ function woocommerce_visanet_init(){
                     'type' 		  => 'text',
                     'description' =>  __('Este dato es generado por el comercio, cadena alfanumerica (0 - 9 y a - f) de un máximo de 16 caracteres.', 'woocommerce'),
                 ),
-                'llavePublica' => array(
-                    'title'  	  => __('Llave publica', 'woocommerce'),
+                'llaveVPOSCryptoPublica' => array(
+                    'title'  	  => __('Llave VPOS Cifrada Pública', 'woocommerce'),
                     'type' 		  => 'textarea',
                     'description' =>  __('Esta llave es proporcionado por VisaNet.', 'woocommerce'),
                 ),
-                'llavePrivada' => array(
-                    'title'  	  => __('Llave privada', 'woocommerce'),
+                'llaveComercioFirmaPrivada' => array(
+                    'title'  	  => __('Llave Comercio Firma Privada', 'woocommerce'),
                     'type' 		  => 'textarea',
                     'description' =>  __('Esta llave es generada por el comercio, como lo indica en la guia provista por VisaNet.', 'woocommerce'),
                 ),
@@ -238,13 +237,13 @@ function woocommerce_visanet_init(){
 				$visanet_adr = $this->liveurl;
 			}
 
-	        $txnid = $order_id . date("ymds");
+	        $txnid = $order_id . 'LS' . date("ymds");
 	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
 	 		$array_get 	= $this->get_array_get( $order ); 
 
- 			$this->VPOSSend( $array_send, $array_get, $this->llavePublica, $this->llavePrivada, substr($this->vector, 0, 16) );
+ 			$this->VPOSSend( $array_send, $array_get, $this->llaveVPOSCryptoPublica, $this->llaveComercioFirmaPrivada, substr($this->vector, 0, 16) );
 
 			wc_enqueue_js( '
 				$.blockUI({
@@ -304,7 +303,7 @@ function woocommerce_visanet_init(){
 
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true )
+				'redirect'	=> $order->get_checkout_payment_url( true ) . '?order=' . $order_id
 			);
 
 	    }
@@ -319,6 +318,53 @@ function woocommerce_visanet_init(){
 	 
 	    }
  
+	    public function visanet_return_handler(){
+
+			$arrayIn['IDCOMMERCE'] = $_POST['IDCOMMERCE'];
+			$arrayIn['IDACQUIRER'] = $_POST['IDACQUIRER'];
+			$arrayIn['XMLRES'] = $_POST['XMLRES'];
+			$arrayIn['DIGITALSIGN'] = $_POST['DIGITALSIGN'];
+			$arrayIn['SESSIONKEY'] = $_POST['SESSIONKEY'];
+
+			$arrayOut = array();
+
+			if( VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
+				//La salida esta en $arrayOut con todos los parámetros decifrados devueltos por el VPOS 
+				$arrayOut['authorizationResult']= $resultadoAutorizacion; 
+				$arrayOut['authorizationCode']= $codigoAutorizacion;
+
+				var_dump($arrayOut);
+
+				if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
+
+					if ( 'yes' == $this->debug ) {
+						$this->log->add( 'visanet', 'Error: Transaccion rechazada.' );
+					}
+
+					// Put this order on-hold for manual checking
+					$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
+					return true;
+
+				} else {
+
+					// Store PP Details
+					update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
+
+					$order->add_order_note( __( 'PDT payment completed', 'woocommerce' ) );
+					$order->payment_complete();
+					return true;
+				}
+
+
+
+			}else{
+				//Puede haber un problema de mala configuración de las llaves, vector de
+				//inicializacion o el VPOS no ha enviado valores correctos 
+				return false;
+			}
+
+	    }
+
 	    function showMessage($content){
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Mostrando mensaje:  ' . $content );
