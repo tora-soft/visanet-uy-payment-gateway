@@ -311,6 +311,10 @@ function woocommerce_visanet_init(){
 				$visanet_adr = $this->liveurl;
 			}
 
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'URL pago ' . $order->get_checkout_payment_url( true ) );
+			}
+
 			return array(
 				'result' 	=> 'success',
 				'redirect'	=> $order->get_checkout_payment_url( true ) 
