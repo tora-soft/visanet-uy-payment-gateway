@@ -330,6 +330,10 @@ function woocommerce_visanet_init(){
  
 	    public function visanet_return_handler(){
 
+			if ( 'yes' == $this->debug ) {
+					$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
+			}
+
 			$arrayIn['IDCOMMERCE'] = $_POST['IDCOMMERCE'];
 			$arrayIn['IDACQUIRER'] = $_POST['IDACQUIRER'];
 			$arrayIn['XMLRES'] = $_POST['XMLRES'];
