@@ -163,7 +163,7 @@ function woocommerce_visanet_init(){
 		 */
     	function receipt_page( $order ){
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Mostrando pagina de recibo ' . $order->get_order_number() );
+				$this->log->add( 'visanet', 'Mostrando pagina de recibo ' . $order-get_order_number>() );
 			}
         	echo '<p>' . __('Thank you for your order, please click the button below to pay with VisaNet UY.', 'woocommerce').'</p>';
         	echo $this->generate_visanet_form( $order );
@@ -222,7 +222,7 @@ function woocommerce_visanet_init(){
 	    public function generate_visanet_form($order_id){
  
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Generando formulario de orden for order ' . $order_id->get_order_number() );
+				$this->log->add( 'visanet', 'Generando formulario de orden for order ' . $order_id );
 			}
 
 	        $order = new WC_Order($order_id);
