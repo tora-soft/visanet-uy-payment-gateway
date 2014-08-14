@@ -179,7 +179,7 @@ function woocommerce_visanet_init(){
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Mostrando pagina de recibo ');
 			}
-        	echo '<p>' . __('Thank you for your order, please click the button below to pay with VisaNet UY.', 'woocommerce').'</p>';
+        	echo '<p>' . __('Gracias por su compra, por favor haga click debajo para pagar en VisaNet.', 'woocommerce').'</p>';
         	echo $this->generate_visanet_form( $order );
     	}
 
