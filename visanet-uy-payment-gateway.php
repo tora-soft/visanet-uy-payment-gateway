@@ -285,9 +285,11 @@ function woocommerce_visanet_init(){
 
 			$order = new WC_Order( $order_id );
 
+			$this->generate_visanet_form($order_id);
+
 			$visanet_args = $this->get_array_get( $order );
 
-			$visanet_args = http_build_query( $visanet_args, '', '&' );
+			//$visanet_args = http_build_query( $visanet_args, '', '&' );
 
 			if ( 'yes' == $this->testmode ) {
 				$visanet_adr = $this->testurl;

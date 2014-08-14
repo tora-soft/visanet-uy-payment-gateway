@@ -1,164 +1,123 @@
 <?php
 
-
-
+class VPOSPlugin{
 
 	function createXMLPHP5($arreglo){
 
-
-
 		$camposValidos_envio = array(
-
-		'acquirerId',
-		'commerceId',
-		'purchaseCurrencyCode',
-		'purchaseAmount',
-		'purchaseOperationNumber',
-		'billingAddress',
-		'billingCity',
-		'billingState',
-		'billingCountry',
-		'billingZIP',
-		'billingPhone',
-		'billingEMail',
-		'billingFirstName',
-		'billingLastName',
-		'language',
-		'commerceMallId',
-		'terminalCode',
-		'tipAmount',
-		'HTTPSessionId',
-		'shippingAddress',
-		'shippingCity',
-		'shippingState',
-		'shippingCountry',
-		'shippingZIP',
-		'shippingPhone',
-		'shippingEMail',
-		'shippingFirstName',
-		'shippingLastName',
-		'reserved1',
-		'reserved2',
-		'reserved3',
-		'reserved4',
-		'reserved5',
-		'reserved6',
-		'reserved7',
-		'reserved8',
-		'reserved9',
-		'reserved10',
-		'reserved11',
-		'reserved12',
-		'reserved13',
-		'reserved14',
-		'reserved15',
-		'reserved16',
-		'reserved17',
-		'reserved18',
-		'reserved19',
-		'reserved20',
-		'reserved21',
-		'reserved22',
-		'reserved23',
-		'reserved24',
-		'reserved25',
-		'reserved26',
-		'reserved27',
-		'reserved28',
-		'reserved29',
-		'reserved30',
-		'reserved31',
-		'reserved32',
-		'reserved33',
-		'reserved34',
-		'reserved35',
-		'reserved36',
-		'reserved37',
-		'reserved38',
-		'reserved39',
-		'reserved40'
-
-
+			'acquirerId',
+			'commerceId',
+			'purchaseCurrencyCode',
+			'purchaseAmount',
+			'purchaseOperationNumber',
+			'billingAddress',
+			'billingCity',
+			'billingState',
+			'billingCountry',
+			'billingZIP',
+			'billingPhone',
+			'billingEMail',
+			'billingFirstName',
+			'billingLastName',
+			'language',
+			'commerceMallId',
+			'terminalCode',
+			'tipAmount',
+			'HTTPSessionId',
+			'shippingAddress',
+			'shippingCity',
+			'shippingState',
+			'shippingCountry',
+			'shippingZIP',
+			'shippingPhone',
+			'shippingEMail',
+			'shippingFirstName',
+			'shippingLastName',
+			'reserved1',
+			'reserved2',
+			'reserved3',
+			'reserved4',
+			'reserved5',
+			'reserved6',
+			'reserved7',
+			'reserved8',
+			'reserved9',
+			'reserved10',
+			'reserved11',
+			'reserved12',
+			'reserved13',
+			'reserved14',
+			'reserved15',
+			'reserved16',
+			'reserved17',
+			'reserved18',
+			'reserved19',
+			'reserved20',
+			'reserved21',
+			'reserved22',
+			'reserved23',
+			'reserved24',
+			'reserved25',
+			'reserved26',
+			'reserved27',
+			'reserved28',
+			'reserved29',
+			'reserved30',
+			'reserved31',
+			'reserved32',
+			'reserved33',
+			'reserved34',
+			'reserved35',
+			'reserved36',
+			'reserved37',
+			'reserved38',
+			'reserved39',
+			'reserved40'
 		);
-
-
 
 		$arrayTemp = array();
 		$taxesName = array();
 		$taxesAmount = array();
 
-
-
-
 		$dom = new DOMDocument('1.0', 'iso-8859-1');
-
-
 
 		$raiz = $dom->createElement('VPOSTransaction1.2');
 
-
-
 		$dom->appendChild($raiz);
-
-
 
 		foreach($arreglo as $key => $value){
 
 			if(in_array($key,$camposValidos_envio)){
-
 				$arrayTemp[$key] = $value;
-
-
 			}
 			else if(preg_match('tax_([0-9]{1}|[0-9]{2})_name',$key)){
-
 				$keyam = preg_replace('(^tax_)|(_name$)','',$key);
-
 				$taxesName[$keyam] = $value;
-
 				//array_push($taxesName,array($keyam => $value));
 			}else if(preg_match('tax_([0-9]{1}|[0-9]{2})_amount',$key)){
-
 				$keyam = preg_replace('(^tax_)|(_amount$)','',$key);
-
 				$taxesAmount[$keyam] = $value;
-
 				//array_push($taxesAmount,array($keyam => $value));
 			}else{
-
 				die($key.' is not allowed in plugin');
-
 			}
-
 		}
-
-
 
 		foreach($arrayTemp as $key => $value){
 			$elem = new DOMElement($key,$value);
-			$raiz -> appendChild($elem);
+			$raiz->appendChild($elem);
 		}
 
-
-
 		if(count($taxesName)>0){
-
 			$elem = $raiz->appendChild(new DOMElement('taxes'));
-
 			foreach($taxesName as $key => $value){
 				$tax = $elem->appendChild(new DOMElement('Tax'));
-
 				$tax->setAttributeNode(new DOMAttr('name',$value));
 				$tax->setAttributeNode(new DOMAttr('amount',$taxesAmount[$key]));
 			}
-
 		}
-
-
-
 		return $dom->saveXML();
 	}
-
 
 	function VPOSSend($arrayIn,&$arrayOut,$llavePublicaCifrado,$llavePrivadaFirma,$VI){
 
@@ -168,21 +127,21 @@
 			die('PHP version is '.$veractual.'and should be >=5.0');
 		}
 
-		$xmlSalida = createXMLPHP5($arrayIn);
+		$xmlSalida = $this->createXMLPHP5($arrayIn);
 
 		//Genera la firma Digital
-		$firmaDigital = BASE64URL_digital_generate($xmlSalida,$llavePrivadaFirma);
+		$firmaDigital = $this->BASE64URL_digital_generate($xmlSalida,$llavePrivadaFirma);
 
 		//Ya se genero el XML y se genera la llave de sesion
-		$llavesesion = generateSessionKey();
+		$llavesesion = $this->generateSessionKey();
 
 		//Se cifra el XML con la llave generada
-		$xmlCifrado = BASE64URL_symmetric_cipher($xmlSalida,$llavesesion,$VI);
+		$xmlCifrado = $this->BASE64URL_symmetric_cipher($xmlSalida,$llavesesion,$VI);
 
 		if(!$xmlCifrado) return null;
 
 		//Se cifra la llave de sesion con la llave publica dada
-		$llaveSesionCifrada = BASE64URLRSA_encrypt($llavesesion,$llavePublicaCifrado);
+		$llaveSesionCifrada = $this->BASE64URLRSA_encrypt($llavesesion,$llavePublicaCifrado);
 
 		if(!$llaveSesionCifrada) return null;
 
@@ -211,15 +170,15 @@
 				return false;
 		}
 
-		$llavesesion = BASE64URLRSA_decrypt($arrayIn['SESSIONKEY'],$llavePrivadaCifrado);
+		$llavesesion = $this->BASE64URLRSA_decrypt($arrayIn['SESSIONKEY'],$llavePrivadaCifrado);
 
-		$xmlDecifrado = BASE64URL_symmetric_decipher($arrayIn['XMLRES'],$llavesesion,$VI);
+		$xmlDecifrado = $this->BASE64URL_symmetric_decipher($arrayIn['XMLRES'],$llavesesion,$VI);
 
-		$validation = BASE64URL_digital_verify($xmlDecifrado,$arrayIn['DIGITALSIGN'],$llavePublicaFirma);
+		$validation = $this->BASE64URL_digital_verify($xmlDecifrado,$arrayIn['DIGITALSIGN'],$llavePublicaFirma);
 
 		if($validation){
 
-			$arrayOut = parseXMLPHP5($xmlDecifrado);
+			$arrayOut = $this->parseXMLPHP5($xmlDecifrado);
 
 			return true;
 		}
@@ -237,19 +196,14 @@
 		return true;
 	}
 
-
  	function generateSessionKey(){
-
  		srand((double)microtime()*1000000);
  		return mcrypt_create_iv(16,MCRYPT_RAND);
-
  	}
 
 	function BASE64URLRSA_encrypt ($valor,$publickey) {
-
  		if (!($pubres = openssl_pkey_get_public($publickey))){
  			die("Public key is not valid");
-
  		}
 
 		$salida = "";
@@ -263,24 +217,18 @@
 			$base64 = preg_replace('(/)','_',$base64);
 			$base64 = preg_replace('(\+)','-',$base64);
 			$base64 = preg_replace('(=)','.',$base64);
-
 			return $base64;
-		}
-		else{
-
+		}else{
 			die('RSA Ciphering could not be executed');
-
 		}
-
 	}
 
 	function BASE64URLRSA_decrypt($valor,$privatekey){
 
- 		 if (!($privres = openssl_pkey_get_private(array($privatekey,null))))
-		 {
+		if (!($privres = openssl_pkey_get_private(array($privatekey,null))))
+		{
 		 	die('Invalid private RSA key has been given');
-
-		 }
+		}
 
 		$salida = "";
 
@@ -298,25 +246,20 @@
 			return $salida;
 		}else{
 			die('RSA deciphering was not succesful');
-
 		}
-
 	}
 
-	function BASE64URL_symmetric_cipher($dato, $key, $vector)
-	{
+	function BASE64URL_symmetric_cipher($dato, $key, $vector){
 
 		$tamVI = strlen($vector);
 
 		if($tamVI != 16){
 			trigger_error('Initialization Vector must have 16 hexadecimal characters', E_USER_ERROR);
-
 			return null;
 		}
 
 		if(strlen($key) != 16){
 			trigger_error("Simetric Key doesn't have length of 16", E_USER_ERROR);
-
 			return null;
 		}
 
@@ -325,12 +268,9 @@
 		if($binvi == null){
 			trigger_error("Initialization Vector is not valid, must contain only hexadecimal characters", E_USER_ERROR);
 			return null;
-
 		}
 
 		$key .= substr($key,0,8); // agrega los primeros 8 bytes al final
-
-
 
 		$text = $dato;
 	  	$block = mcrypt_get_block_size('tripledes', 'cbc');
@@ -352,8 +292,7 @@
 	// Esta funcion se encarga de desencriptar los datos recibidos del MPI
 	// Recibe como parametro el dato a desencriptar
 	//-------------------------------------------------------------------------------------
-	function BASE64URL_symmetric_decipher($dato, $key, $vector)
-	{
+	function BASE64URL_symmetric_decipher($dato, $key, $vector){
 		$tamVI = strlen($vector);
 
 		if($tamVI != 16){
@@ -362,7 +301,6 @@
 		}
 		if(strlen($key) != 16){
 			trigger_error("Simetric Key doesn't have length of 16", E_USER_ERROR);
-
 			return null;
 		}
 
@@ -370,30 +308,24 @@
 
 		if($binvi == null){
 			trigger_error("Initialization Vector is not valid, must contain only hexadecimal characters", E_USER_ERROR);
-
 			return null;
-
 		}
+
 		$key .= substr($key,0,8); // agrega los primeros 8 bytes al final
 
 		$pas = preg_replace('(_)','/',$dato);
 		$pas = preg_replace('(-)','+',$pas);
 		$pas = preg_replace('(\.)','=',$pas);
 
-
 		$crypttext = base64_decode($pas);
 
 		$crypttext2 = mcrypt_decrypt(MCRYPT_3DES, $key, $crypttext, MCRYPT_MODE_CBC, $binvi);
 
-
 		$block = mcrypt_get_block_size('tripledes', 'cbc');
 		$packing = ord($crypttext2{strlen($crypttext2) - 1});
-		if($packing and ($packing < $block))
-		{
-			for($P = strlen($crypttext2) - 1; $P >= strlen($crypttext2) - $packing; $P--)
-			{
-				if(ord($crypttext2{$P}) != $packing)
-				{
+		if($packing and ($packing < $block)){
+			for($P = strlen($crypttext2) - 1; $P >= strlen($crypttext2) - $packing; $P--){
+				if(ord($crypttext2{$P}) != $packing){
 					$packing = 0;
 				}
 			}
@@ -409,20 +341,13 @@
 	// la llave privada en $privatekey
 	//-------------------------------------------------------------------------------------
 
- 	function BASE64URL_digital_generate($dato, $privatekey)
- 	{
+ 	function BASE64URL_digital_generate($dato, $privatekey){
 
  		$privres = openssl_pkey_get_private(array($privatekey,null));
- 		 if (!$privres)
-		 {
+ 		 if (!$privres){
 		 	die("Private key is not valid");
-
 		 }
-
-
  		$firma = "";
-
-
 
  		$resp = openssl_sign($dato,$firma,$privres);
 
@@ -438,9 +363,8 @@
 
 			//$urlencoded = urlencode($base64);
 			return $crypttext;
-		}
-		else{
-		die("RSA Signature was unsuccesful");
+		}else{
+			die("RSA Signature was unsuccesful");
 		}
 
 
@@ -465,9 +389,6 @@
  		return $resp;
  	}
 
-
- 	//
-
 	function parseXMLPHP5($xml){
 
 		$arregloSalida = array();
@@ -483,16 +404,14 @@
 			$arregloSalida[$nodoHijo->nodeName] = $nodoHijo->nodeValue;
 		}
 
-		while (($nodoHijo=$nodoHijo->nextSibling)!=null) {
+		while (($nodoHijo=$nodoHijo->nextSibling)!=null){
 			$i = 1;
 			if(strcmp($nodoHijo->nodeName,'taxes')==0){
 				if($nodoHijo->hasChildNodes()){
 					$nodoTax = $nodoHijo->firstChild;
-
 					$arregloSalida['tax_'.$i.'_name'] = $nodoTax->getAttribute('name');
 					$arregloSalida['tax_'.$i.'_amount'] = $nodoTax->getAttribute('amount');
 					$i++;
-
 				}
 
 				while (($nodoTax=$nodoTax->nextSibling)!=null) {
@@ -501,14 +420,14 @@
 					$i++;
 				}
 
-			}else {
+			}else{
 				$arregloSalida[$nodoHijo->nodeName] = $nodoHijo->nodeValue;
 			}
-
-
 		}
-
 		return $arregloSalida;
 	}
+
+}
+
 
 ?>
