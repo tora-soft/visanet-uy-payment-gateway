@@ -74,7 +74,7 @@ function woocommerce_visanet_init(){
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Chequeando si los campos requeridos han sido llenados y si es valido la configuracion. ' );
 			}
-			if ( empty($this->idacquirer) || empty($this->idcommerce) || empty($this->vector) || empty($this->llavePublica) || empty($this->llavePrivada) ) {
+			if ( empty($this->idacquirer) || empty($this->idcommerce) || empty($this->vector) || empty($this->llaveVPOSCryptoPublica) || empty($this->llaveVPOSFirmaPublica || empty($this->llaveComercioCryptoPrivada) || empty($this->llaveComercioFirmaPrivada)) ) {
 				return false;
 			}
 			return true;
@@ -127,7 +127,7 @@ function woocommerce_visanet_init(){
                     'description' =>  __('Esta llave es proporcionado por VisaNet.', 'woocommerce'),
                 ),
                 'llaveComercioCryptoPrivada' => array(
-                    'title'  	  => __('Llave Comercio Firma Privada', 'woocommerce'),
+                    'title'  	  => __('Llave Comercio Cifrada Privada', 'woocommerce'),
                     'type' 		  => 'textarea',
                     'description' =>  __('Esta llave es generada por el comercio, como lo indica en la guia provista por VisaNet.', 'woocommerce'),
                 ),
