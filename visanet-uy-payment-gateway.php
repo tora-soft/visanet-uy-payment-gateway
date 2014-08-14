@@ -313,7 +313,7 @@ function woocommerce_visanet_init(){
 
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true )
+				'redirect'	=> $order->get_checkout_payment_url( true ) . '?order_id=' . $order_id 
 			);
 
 	    }
@@ -343,7 +343,10 @@ function woocommerce_visanet_init(){
 				$arrayOut['authorizationResult']= $resultadoAutorizacion; 
 				$arrayOut['authorizationCode']= $codigoAutorizacion;
 
-				var_dump($arrayOut);
+				if ( 'yes' == $this->debug ) {
+						$this->log->add( 'visanet', 'Error: Transaccion rechazada. arrayOut ' . var_dump($arrayOut) );
+				}
+				
 
 				if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
 
@@ -352,16 +355,18 @@ function woocommerce_visanet_init(){
 					}
 
 					// Put this order on-hold for manual checking
-					$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
+					//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
 					return true;
 
 				} else {
-
+					if ( 'yes' == $this->debug ) {
+						$this->log->add( 'visanet', 'Pago completo.' );
+					}
 					// Store PP Details
-					update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
+					//update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
 
-					$order->add_order_note( __( 'PDT payment completed', 'woocommerce' ) );
-					$order->payment_complete();
+					//$order->add_order_note( __( 'Pago completo', 'woocommerce' ) );
+					//$order->payment_complete();
 					return true;
 				}
 
