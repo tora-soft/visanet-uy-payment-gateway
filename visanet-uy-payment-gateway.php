@@ -39,6 +39,7 @@ function woocommerce_visanet_init(){
 			$this->description 			= $this->get_option('description');
 			$this->idacquirer 			= $this->get_option('idacquirer');
 			$this->idcommerce 			= $this->get_option('idcommerce');
+			$this->idcommerce 			= $this->get_option('currency_code');
 			$this->vector 				= $this->get_option('vector');
 			$this->llavePublica 		= $this->get_option('llavePublica');
 			$this->llavePrivada 		= $this->get_option('llavePrivada');
@@ -237,7 +238,7 @@ function woocommerce_visanet_init(){
 				$visanet_adr = $this->liveurl;
 			}
 
-	        $txnid = $order_id.'_'.date("ymds");
+	        $txnid = $order_id . date("ymds");
 	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
@@ -247,7 +248,7 @@ function woocommerce_visanet_init(){
 
 			wc_enqueue_js( '
 				$.blockUI({
-						message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.', 'woocommerce' ) ) . '",
+						message: "' . esc_js( __( 'Gracias por su compra. Ahora lo vamos a redireccionar a VisaNet donde ud puede realizar el pago de manera segura.', 'woocommerce' ) ) . '",
 						baseZ: 99999,
 						overlayCSS:
 						{
