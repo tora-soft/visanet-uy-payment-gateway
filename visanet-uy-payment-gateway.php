@@ -121,6 +121,16 @@ function woocommerce_visanet_init(){
                     'type' 		  => 'textarea',
                     'description' =>  __('Esta llave es proporcionado por VisaNet.', 'woocommerce'),
                 ),
+                'llaveVPOSFirmaPublica' => array(
+                    'title'  	  => __('Llave VPOS Firma Pública', 'woocommerce'),
+                    'type' 		  => 'textarea',
+                    'description' =>  __('Esta llave es proporcionado por VisaNet.', 'woocommerce'),
+                ),
+                'llaveComercioCryptoPrivada' => array(
+                    'title'  	  => __('Llave Comercio Firma Privada', 'woocommerce'),
+                    'type' 		  => 'textarea',
+                    'description' =>  __('Esta llave es generada por el comercio, como lo indica en la guia provista por VisaNet.', 'woocommerce'),
+                ),
                 'llaveComercioFirmaPrivada' => array(
                     'title'  	  => __('Llave Comercio Firma Privada', 'woocommerce'),
                     'type' 		  => 'textarea',
