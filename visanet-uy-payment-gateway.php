@@ -74,7 +74,7 @@ function woocommerce_visanet_init(){
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Chequeando si los campos requeridos han sido llenados y si es valido la configuracion. ' );
 			}
-			if ( empty($this->idacquirer) || empty($this->idcommerce) || empty($this->vector) || empty($this->llaveVPOSCryptoPublica) || empty($this->llaveVPOSFirmaPublica) || empty($this->llaveComercioCryptoPrivada) || empty($this->llaveComercioFirmaPrivada)) ) {
+			if ( empty($this->idacquirer) || empty($this->idcommerce) || empty($this->vector) || empty($this->llaveVPOSCryptoPublica) || empty($this->llaveVPOSFirmaPublica) || empty($this->llaveComercioCryptoPrivada) || empty($this->llaveComercioFirmaPrivada) ) {
 				return false;
 			}
 			return true;
