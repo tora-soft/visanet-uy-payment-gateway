@@ -313,7 +313,7 @@ function woocommerce_visanet_init(){
 
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true ) . '?order_id=' . $order_id 
+				'redirect'	=> $order->get_checkout_payment_url( true ) 
 			);
 
 	    }
