@@ -39,7 +39,7 @@ function woocommerce_visanet_init(){
 			$this->description 			= $this->get_option('description');
 			$this->idacquirer 			= $this->get_option('idacquirer');
 			$this->idcommerce 			= $this->get_option('idcommerce');
-			$this->idcommerce 			= $this->get_option('currency_code');
+			$this->currency_code		= $this->get_option('currency_code');
 			$this->vector 				= $this->get_option('vector');
 			$this->llavePublica 		= $this->get_option('llavePublica');
 			$this->llavePrivada 		= $this->get_option('llavePrivada');
