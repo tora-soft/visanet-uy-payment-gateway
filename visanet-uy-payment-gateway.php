@@ -40,8 +40,8 @@ function woocommerce_visanet_init(){
 			$this->currency_code				= $this->get_option('currency_code');
 			$this->vector 						= $this->get_option('vector');
 			$this->llaveVPOSCryptoPublica 		= $this->get_option('llaveVPOSCryptoPublica');
-			$this->llaveVPOSFirmaPublica 		= $this->get_option('llaveVPOSCryptoPublica');
-			$this->llaveComercioCryptoPrivada	= $this->get_option('llaveComercioFirmaPrivada');
+			$this->llaveVPOSFirmaPublica 		= $this->get_option('llaveVPOSFirmaPublica');
+			$this->llaveComercioCryptoPrivada	= $this->get_option('llaveComercioCryptoPrivada');
 			$this->llaveComercioFirmaPrivada	= $this->get_option('llaveComercioFirmaPrivada');
 			$this->redirect_page_id 			= $this->get_option('redirect_page_id');
 			$this->testmode						= $this->get_option('testmode');
