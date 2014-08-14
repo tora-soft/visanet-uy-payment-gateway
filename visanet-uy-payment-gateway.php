@@ -236,7 +236,7 @@ function woocommerce_visanet_init(){
 	    public function generate_visanet_form($order_id){
  
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Generando formulario de orden for order ' . $order_id );
+				$this->log->add( 'visanet', 'Generando formulario de orden para orden ' . $order_id );
 			}
 
 	        $order = new WC_Order($order_id);
