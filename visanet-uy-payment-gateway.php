@@ -107,6 +107,10 @@ function woocommerce_visanet_init(){
                     'title' 	  => __('ID Commerce', 'woocommerce'),
                     'type' 		  => 'text',
                     'description' => __('Este dato es proporcionado por VisaNet.')),
+                'currency_code' => array(
+                    'title' 	  => __('Moneda', 'woocommerce'),
+                    'type' 		  => 'text',
+                    'description' => __('Codigo ISO alfanumerico de 3 caracteres. Debe estar en las monedas permitidas para su comercio.')),
                 'vector' => array(
                     'title' 	  => __('Vector de inicializacion', 'woocommerce'),
                     'type' 		  => 'text',
@@ -178,8 +182,8 @@ function woocommerce_visanet_init(){
 
 	        $array_send['acquirerId'] 				= $this->idacquirer;
 	        $array_send['commerceId'] 				= $this->idcommerce;
-	        $array_send['purchaseAmount'] 			= $order->order_total;
-	        $array_send['purchaseCurrencyCode'] 	= $this->idacquirer;
+	        $array_send['purchaseAmount'] 			= $order->order_total * 100;
+	        $array_send['purchaseCurrencyCode'] 	= $this->currency_code;
 	        $array_send['purchaseOperationNumber'] 	= $txnid;
 
 			$array_send['billingAddress']			= $order->billing_address_1; 
