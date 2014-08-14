@@ -195,8 +195,7 @@ function woocommerce_visanet_init(){
 	        $array_send['purchaseOperationNumber'] 	= $txnid;
 	        $array_send['purchaseAmount'] 			= $order->order_total * 100;
 	        $array_send['purchaseCurrencyCode'] 	= $this->currency_code;
-	        $array_send['purchaseIPAddress'] 		= filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
-
+	        
 			$array_send['billingAddress']			= $order->billing_address_1; 
 			$array_send['billingCity']				= $order->billing_city; 
 			$array_send['billingState']				= $order->billing_state; 
