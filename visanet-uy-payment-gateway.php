@@ -290,30 +290,12 @@ function woocommerce_visanet_init(){
 	     * Process the payment and return the result
 	     **/
 	    function process_payment($order_id){
-			global $woocommerce;
 			
 			$order = new WC_Order( $order_id );
 
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Procesando pago ' . $order_id . ' - return url ' . $order->get_checkout_payment_url( true ));
 			}
-
-			$visanet_args = $this->get_array_get( $order );
-
-			if ( 'yes' == $this->testmode ) {
-				$visanet_adr = $this->testurl;
-			} else {
-				$visanet_adr = $this->liveurl;
-			}
-
-			// Mark as on-hold (we're awaiting the cheque)
-			$order->update_status('on-hold', __( 'Esperando respuesta.', 'woocommerce' ));
-
-			// Reduce stock levels
-			$order->reduce_order_stock();
-
-			// Remove cart
-			$woocommerce->cart->empty_cart();
 
 			return array(
 				'result' 	=> 'success',
@@ -346,7 +328,7 @@ function woocommerce_visanet_init(){
 
 			$arrayOut = array();
 
-			if( VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
+			if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
 				//La salida esta en $arrayOut con todos los parámetros decifrados devueltos por el VPOS 
 				$arrayOut['authorizationResult']= $resultadoAutorizacion; 
 				$arrayOut['authorizationCode']= $codigoAutorizacion;
