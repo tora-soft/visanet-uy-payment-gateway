@@ -300,7 +300,7 @@ function woocommerce_visanet_init(){
 
 			$order = new WC_Order( $order_id );
 
-			$this->generate_visanet_form($order_id);
+			//$this->generate_visanet_form($order_id);
 
 			$visanet_args = $this->get_array_get( $order );
 
@@ -314,7 +314,7 @@ function woocommerce_visanet_init(){
 
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true ) . '&order_id=' . $order_id 
+				'redirect'	=> $order->get_checkout_payment_url( true )
 			);
 
 	    }
@@ -329,10 +329,10 @@ function woocommerce_visanet_init(){
 	 
 	    }
  
-	    public function visanet_return_handler(){
+	    function visanet_return_handler(){
 
 			if ( 'yes' == $this->debug ) {
-					$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
+				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
 			}
 
 			$arrayIn['IDCOMMERCE'] = $_POST['IDCOMMERCE'];
