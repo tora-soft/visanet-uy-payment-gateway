@@ -43,7 +43,6 @@ function woocommerce_visanet_init(){
 			$this->llaveVPOSFirmaPublica 		= $this->get_option('llaveVPOSFirmaPublica');
 			$this->llaveComercioCryptoPrivada	= $this->get_option('llaveComercioCryptoPrivada');
 			$this->llaveComercioFirmaPrivada	= $this->get_option('llaveComercioFirmaPrivada');
-			$this->redirect_page_id 			= $this->get_option('redirect_page_id');
 			$this->testmode						= $this->get_option('testmode');
 			$this->debug						= $this->get_option('debug');
 
@@ -136,12 +135,6 @@ function woocommerce_visanet_init(){
                     'title'  	  => __('Llave Comercio Firma Privada', 'woocommerce'),
                     'type' 		  => 'textarea',
                     'description' =>  __('Esta llave es generada por el comercio, como lo indica en la guia provista por VisaNet.', 'woocommerce'),
-                ),
-                'redirect_page_id' => array(
-                    'title' 	  => __('Pagina de retorno'),
-                    'type'  	  => 'select',
-                    'options' 	  => $this->get_pages('Por favor elija'),
-                    'description' => "Pagina a mostrar luego de pago existoso."
                 ),
 	 			'testmode' => array(
 					'title'       => __( 'VisaNet Modo de pruebas', 'woocommerce' ),
