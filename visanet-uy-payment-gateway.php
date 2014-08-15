@@ -247,7 +247,7 @@ function woocommerce_visanet_init(){
 				$visanet_adr = $this->liveurl;
 			}
 
-	        $txnid = 'LS' . $order_id . 'LS' . date("ymd");
+	        $txnid = 'LS' . $order_id . date("ymd");
 	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
