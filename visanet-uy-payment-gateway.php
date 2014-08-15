@@ -279,7 +279,11 @@ function woocommerce_visanet_init(){
 				jQuery("#submit_visanet_payment_form").click();
 			');
 
-        	return '<form action="' . $visanet_adr . '?order_id=' . $order_id . '" method="post" id="visanet_payment_form">
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'visanet', 'Enviando formulario de orden para orden ' . $order_id . ' - ' . $txnid );
+			}
+
+        	return '<form action="' . $visanet_adr . '" method="post" id="visanet_payment_form">
 	            <input type="hidden" name="IDACQUIRER" value="' . $this->idacquirer . '"/>
 	            <input type="hidden" name="IDCOMMERCE" value="' . $this->idcommerce . '"/>
 	            <input type="hidden" name="XMLREQ" value="' . $array_get['XMLREQ'] . '"/>
