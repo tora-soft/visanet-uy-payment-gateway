@@ -54,14 +54,14 @@ function woocommerce_visanet_init(){
  
  			// Actions / Acciones
 
-			add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'visanet_return_handler' ) );
 			
 			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+			add_action( 'woocommerce_thankyou_visanet', array( $this, 'visanet_return_handler' ) );
 
-			if ( ! $this->is_valid_for_use() ) {
-				$this->enabled = false;
-			}
+			// if ( ! $this->is_valid_for_use() ) {
+			// 	$this->enabled = false;
+			// }
 
    		}
 
@@ -349,7 +349,7 @@ function woocommerce_visanet_init(){
 				$arrayOut['authorizationCode']= $codigoAutorizacion;
 
 				if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Error: Transaccion rechazada. arrayOut ' . var_dump($arrayOut) );
+					$this->log->add( 'visanet', 'Error: Transaccion rechazada. arrayOut ' . var_dump($arrayOut) );
 				}
 				
 
