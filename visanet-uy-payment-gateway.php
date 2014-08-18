@@ -53,15 +53,14 @@ function woocommerce_visanet_init(){
  
  			// Actions / Acciones
 
-         	add_action('woocommerce_thankyou_visanet', array($this, 'visanet_check_response'));
-			
-			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
-			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-			//add_action( 'woocommerce_thankyou_visanet', array( $this, 'visanet_return_handler' ) );
+         	add_action(	'woocommerce_check_response_' . $this->id 					, array( $this, 'check_response' ));			
+			add_action( 'woocommerce_receipt_' . $this->id 							, array( $this, 'receipt_page'   ));
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id 	, array( $this, 'process_admin_options' ));
+            add_action( 'woocommerce_thankyou_visanet'								, array( $this, 'thankyou_page'  ));
 
-			// if ( ! $this->is_valid_for_use() ) {
-			// 	$this->enabled = false;
-			// }
+			if ( ! $this->is_valid_for_use() ) {
+				$this->enabled = false;
+			}
 
    		}
 
@@ -308,24 +307,20 @@ function woocommerce_visanet_init(){
 	    /**
 	     * Check for valid visanet server callback
 	     **/
-	    function check_visanet_response(){
-			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Checking VisaNetUY response is valid.' );
-			}
-	 
-	    }
  
-	    function visanet_check_response(){
+	    function check_response(){
 
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
 			}
 
-			$arrayIn['IDCOMMERCE'] = $_POST['IDCOMMERCE'];
-			$arrayIn['IDACQUIRER'] = $_POST['IDACQUIRER'];
-			$arrayIn['XMLRES'] = $_POST['XMLRES'];
-			$arrayIn['DIGITALSIGN'] = $_POST['DIGITALSIGN'];
-			$arrayIn['SESSIONKEY'] = $_POST['SESSIONKEY'];
+			$arrayIn = array(
+				'IDCOMMERCE' => $_POST['IDCOMMERCE'],
+				'IDACQUIRER' => $_POST['IDACQUIRER'],
+				'XMLRES'	 => $_POST['XMLRES'],
+				'DIGITALSIGN'=> $_POST['DIGITALSIGN'],
+				'SESSIONKEY' => $_POST['SESSIONKEY']
+				);
 
 			$arrayOut = array();
 
