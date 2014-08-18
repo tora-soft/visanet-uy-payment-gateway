@@ -295,7 +295,7 @@ function woocommerce_visanet_init(){
 			$order = new WC_Order( $order_id );
 
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Procesando pago ' . $order_id . ' - checkout url ' . $order->get_checkout_payment_url( true ));
+				$this->log->add( 'visanet', 'Procesando pago ' . $order_id . ' - checkout url ' . $order->get_checkout_payment_url( true ) . ' - return url ' . $order->get_checkout_order_received_url());
 			}
 
 			return array(
