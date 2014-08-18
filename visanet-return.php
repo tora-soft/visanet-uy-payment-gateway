@@ -1,6 +1,6 @@
 <?php
 
-$cookie_exists = false
+$cookie_exists = false;
 if( isset($_COOKIE['woocommerce_cart_hash'])){
 	if(!isset($_GET['key']) && !empty($_COOKIE['woocommerce_order_id']) && !empty($_COOKIE['woocommerce_order_key'])){
 
