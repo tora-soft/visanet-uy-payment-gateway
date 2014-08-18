@@ -59,9 +59,9 @@ function woocommerce_visanet_init(){
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id 	, array( $this, 'process_admin_options' ));
             add_action( 'woocommerce_thankyou_' . $this->id							, array( $this, 'check_response'  ));
 
-			if ( ! $this->is_valid_for_use() ) {
-				$this->enabled = false;
-			}
+			// if ( ! $this->is_valid_for_use() ) {
+			// 	$this->enabled = false;
+			// }
 
    		}
 
