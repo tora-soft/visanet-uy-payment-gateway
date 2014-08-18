@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 Plugin Name: WooCommerce VisaNetUY Payment Gateway
 Plugin URI: http://www.tora-soft.com
 Description: VisaNetUY Payment gateway for woocommerce
-Version: 0.1.0
+Version: 0.1.1
 Author: Federico Giust
 Author URI: http://www.tora-soft.com
 */
@@ -22,7 +22,7 @@ function woocommerce_visanet_init(){
     	public function __construct(){
 		
 			$this->id 					= 'visanet';
-			$this->medthod_title 		= __( 'VisaNet', 'woocommerce' );
+			$this->method_title 		= __( 'VisaNet', 'woocommerce' );
 			$this->order_button_text 	= __( 'Ir a VisaNet', 'woocommerce' );
 			$this->testurl 				= 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do';
 			$this->liveurl 				= 'https://vpayment.verifika.com/VPOS/MM/transactionStart20.do';
@@ -54,7 +54,6 @@ function woocommerce_visanet_init(){
  
  			// Actions / Acciones
          	
-         	add_action('init', array(&$this, 'check_response'));
 			add_action( 'woocommerce_receipt_' . $this->id 							, array( $this, 'receipt_page'   ));
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id 	, array( $this, 'process_admin_options' ));
             add_action( 'woocommerce_thankyou_' . $this->id							, array( $this, 'check_response'  ));
