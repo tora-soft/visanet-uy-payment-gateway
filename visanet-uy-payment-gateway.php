@@ -230,7 +230,7 @@ function woocommerce_visanet_init(){
 	    public function generate_visanet_form($order_id){
  
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Generando formulario de orden para orden ' . $order_id );
+				$this->log->add( 'visanet', 'Generando formulario de orden para orden ' . $order_id . ' - ' . time());
 			}
 
 	        $order = new WC_Order($order_id);
@@ -241,7 +241,12 @@ function woocommerce_visanet_init(){
 				$visanet_adr = $this->liveurl;
 			}
 
-			$expire = time()+300;
+			$event_time = time();
+			$event_length = 5;
+			 
+			$timestamp = strtotime("$event_time");
+			$etime = strtotime("+$event_length minutes", $timestamp);
+			$expire = date('H:i:s', $etime);
 
 			$return_url = parse_url($order->get_checkout_order_received_url());
 
