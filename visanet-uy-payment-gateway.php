@@ -308,12 +308,18 @@ function woocommerce_visanet_init(){
 	     * Check for valid visanet server callback
 	     **/
  
-	    function check_response(){
+	    function check_response( $posted ){
+	    	global $woocommerce;
 
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
 			}
 
+			if ( isset($_POST['IDCOMMERCE']) ){
+				return 'gracias';
+			} else {
+				return 'blah';
+			}
 			// $arrayIn = array(
 			// 	'IDCOMMERCE' => $_POST['IDCOMMERCE'],
 			// 	'IDACQUIRER' => $_POST['IDACQUIRER'],
