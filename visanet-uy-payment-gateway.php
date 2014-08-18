@@ -243,7 +243,7 @@ function woocommerce_visanet_init(){
 
 			$expire = time()+300;
 
-			$return_url = parse_url($order->get_checkout_order_received_url(), PHP_URL_PATH);
+			$return_url = parse_url($order->get_checkout_order_received_url());
 
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Guardando cookie ' . $order_id . ' - woocommerce_order_id: '.$order_id.'|woocommerce_order_key:'.var_dump($return_url)  );
