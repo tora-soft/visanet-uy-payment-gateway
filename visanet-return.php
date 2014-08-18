@@ -11,6 +11,8 @@ if( isset($_COOKIE['woocommerce_cart_hash'])){
 		header('Location: ' . $current_url . $order_id . '/?' . urldecode($order_key) );
 		$cookie_exists = true;
 	}
+}else{
+	echo 'Ha ocurrido un error al volver de VisaNet.';
 }
 
 ?>
