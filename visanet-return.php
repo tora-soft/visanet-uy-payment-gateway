@@ -13,10 +13,4 @@ if( isset($_COOKIE['woocommerce_cart_hash'])){
 	}
 }
 
-if($cookie_exists){
-	echo 'viva';
-}else{
-	echo 'uck';
-}
-
 ?>
