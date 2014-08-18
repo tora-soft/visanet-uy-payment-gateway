@@ -260,28 +260,28 @@ function woocommerce_visanet_init(){
 
  			$this->VPOSSend( $array_send, $array_get, $this->llaveVPOSCryptoPublica, $this->llaveComercioFirmaPrivada, substr($this->vector, 0, 16) );
 
-			wc_enqueue_js( '
-				$.blockUI({
-						message: "' . esc_js( __( 'Gracias por su compra. Ahora lo vamos a redireccionar a VisaNet donde ud puede realizar el pago de manera segura.', 'woocommerce' ) ) . '",
-						baseZ: 99999,
-						overlayCSS:
-						{
-							background: "#fff",
-							opacity: 0.6
-						},
-						css: {
-							padding:        "20px",
-							zindex:         "9999999",
-							textAlign:      "center",
-							color:          "#555",
-							border:         "3px solid #aaa",
-							backgroundColor:"#fff",
-							cursor:         "wait",
-							lineHeight:		"24px",
-						}
-					});
-				jQuery("#submit_visanet_payment_form").click();
-			');
+			// wc_enqueue_js( '
+			// 	$.blockUI({
+			// 			message: "' . esc_js( __( 'Gracias por su compra. Ahora lo vamos a redireccionar a VisaNet donde ud puede realizar el pago de manera segura.', 'woocommerce' ) ) . '",
+			// 			baseZ: 99999,
+			// 			overlayCSS:
+			// 			{
+			// 				background: "#fff",
+			// 				opacity: 0.6
+			// 			},
+			// 			css: {
+			// 				padding:        "20px",
+			// 				zindex:         "9999999",
+			// 				textAlign:      "center",
+			// 				color:          "#555",
+			// 				border:         "3px solid #aaa",
+			// 				backgroundColor:"#fff",
+			// 				cursor:         "wait",
+			// 				lineHeight:		"24px",
+			// 			}
+			// 		});
+			// 	jQuery("#submit_visanet_payment_form").click();
+			// ');
 
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Enviando formulario de orden para orden ' . $order_id . ' - ' . $txnid );
