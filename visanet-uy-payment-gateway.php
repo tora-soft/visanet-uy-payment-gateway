@@ -246,11 +246,11 @@ function woocommerce_visanet_init(){
 			$return_url = parse_url($order->get_checkout_order_received_url());
 
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Guardando cookie ' . $order_id . ' - woocommerce_order_id: '.$order_id.'|woocommerce_order_key:'.($return_url)  );
+				$this->log->add( 'visanet', 'Guardando cookie ' . $order_id . ' - woocommerce_order_id: '.$order_id.'|woocommerce_order_key:'.$return_url  );
 			}
 
-			if(!empty($_COOKIE['woocommerce_order_id'])) unset($_COOKIE['woocommerce_order_id']));
-			if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']));
+			if(!empty($_COOKIE['woocommerce_order_id'])) unset($_COOKIE['woocommerce_order_id']);
+			if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']);
 
 			setcookie("woocommerce_order_id", $order_id );
 			setcookie("woocommerce_order_key", $return_url['query']);
