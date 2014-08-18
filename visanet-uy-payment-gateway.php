@@ -241,7 +241,7 @@ function woocommerce_visanet_init(){
 				$visanet_adr = $this->liveurl;
 			}
 
-			$expire - time()+300;
+			$expire = time()+300;
 
 			$return_url = parse_url($order->get_checkout_order_received_url(), PHP_URL_PATH);
 
