@@ -171,7 +171,7 @@ function woocommerce_visanet_init(){
 		 */
     	function receipt_page( $order ){
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Mostrando pagina de recibo ');
+				$this->log->add( 'visanet', 'Mostrando pagina de recibo y generando formulario POST. ');
 			}
         	echo '<p>' . __('Gracias por su compra, por favor haga click debajo para pagar en VisaNet.', 'woocommerce').'</p>';
         	echo $this->generate_visanet_form( $order );
@@ -315,8 +315,10 @@ function woocommerce_visanet_init(){
 			$order = new WC_Order( $order_id );
 
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Procesando pago ' . $order_id . ' - checkout url ' . $order->get_checkout_payment_url( true ) . ' - return url ' . $order->get_checkout_order_received_url());
+				$this->log->add( 'visanet', 'Procesando orden: ' . $order_id . ' - ' . time() . ' | checkout url ' . $order->get_checkout_payment_url( true ) . ' | return url ' . $order->get_checkout_order_received_url());
 			}
+
+			$order->update_status( 'on-hold',  __( 'Procesando pago via VisaNet ordern: ' . $order_id, 'woocommerce' ) );
 
 			return array(
 				'result' 	=> 'success',
@@ -329,11 +331,17 @@ function woocommerce_visanet_init(){
 	     * Check for valid visanet server callback
 	     **/
  
-	    function check_response( $posted ){
+	    function check_response(){
 	    	global $woocommerce;
 
+			$posted = stripslashes_deep( $_REQUEST );
+
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
+				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ' . var_dump($posted) );
+			}
+
+			if ( 'pending' != $order->status ) {
+				return false;
 			}
 
 			$order = new WC_Order( $_POST['order_id'] );
@@ -369,7 +377,7 @@ function woocommerce_visanet_init(){
 					}
 					// Put this order on-hold for manual checking
 					if ($resultadoAutorizacion != null && $resultadoAutorizacion != '05'){
-						$order->update_status( 'on-hold',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+						$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 					}
 					if ($resultadoAutorizacion == '05'){
 						$order->update_status( 'cancelled',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
@@ -387,6 +395,9 @@ function woocommerce_visanet_init(){
 
 					// Remove cart
 					$woocommerce->cart->empty_cart();
+
+					$order->update_status( 'completed',  __( 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] . ' | Tarjeta : ' . $arrayOut['cardNumber'], 'woocommerce' ) );
+
 					// Store PP Details
 					update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
 
