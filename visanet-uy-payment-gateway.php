@@ -332,22 +332,20 @@ function woocommerce_visanet_init(){
 	    function check_response(){
 	    	global $woocommerce;
 
-			$posted = stripslashes_deep( $_REQUEST );
-
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ' . json_encode($posted) );
+				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ' . json_encode($_POST) );
 			}
 
-			if( isset($posted['order_id']) ){
+			if( isset($_POST['order_id']) ){
 
-				$order = new WC_Order( $posted['order_id'] );
+				$order = new WC_Order( $_POST['order_id'] );
 
 				$arrayIn = array(
-					'IDCOMMERCE' => $posted['IDCOMMERCE'],
-					'IDACQUIRER' => $posted['IDACQUIRER'],
-					'XMLRES'	 => $posted['XMLRES'],
-					'DIGITALSIGN'=> $posted['DIGITALSIGN'],
-					'SESSIONKEY' => $posted['SESSIONKEY']
+					'IDCOMMERCE' => $_POST['IDCOMMERCE'],
+					'IDACQUIRER' => $_POST['IDACQUIRER'],
+					'XMLRES'	 => $_POST['XMLRES'],
+					'DIGITALSIGN'=> $_POST['DIGITALSIGN'],
+					'SESSIONKEY' => $_POST['SESSIONKEY']
 					);
 
 				$arrayOut = array();
