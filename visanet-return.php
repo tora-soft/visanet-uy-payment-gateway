@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ALL);
+
 $cookie_exists = false;
 if( isset($_COOKIE['woocommerce_cart_hash']) && isset($_COOKIE['woocommerce_order_id']) && isset($_COOKIE['woocommerce_order_key'])){
 	if(!isset($_GET['key']) && !empty($_COOKIE['woocommerce_order_id']) && !empty($_COOKIE['woocommerce_order_key'])){
@@ -7,7 +9,7 @@ if( isset($_COOKIE['woocommerce_cart_hash']) && isset($_COOKIE['woocommerce_orde
 		$order_id = $_COOKIE['woocommerce_order_id'];
 		$order_key = $_COOKIE['woocommerce_order_key'];
 		$order_returnurl = $_COOKIE['woocommerce_order_returnurl'];
-		$current_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		//$current_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
     	echo '<form action="' . $order_returnurl . '" method="post" id="visanet_return_form">
             <input type="hidden" name="IDCOMMERCE" value="' . $_POST['IDCOMMERCE'] . '"/>
