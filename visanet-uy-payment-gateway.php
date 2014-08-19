@@ -257,8 +257,8 @@ function woocommerce_visanet_init(){
 			if(!empty($_COOKIE['woocommerce_order_id'])) unset($_COOKIE['woocommerce_order_id']);
 			if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']);
 
-			setcookie("woocommerce_order_id", $order_id, $expire, "/wordpress/", "www.tora-soft.com");
-			setcookie("woocommerce_order_key", $return_url['query'], $expire, "/wordpress/", "www.tora-soft.com");
+			setcookie("woocommerce_order_id", $order_id, time()+3600, "/wordpress/", "www.tora-soft.com");
+			setcookie("woocommerce_order_key", $return_url['query'], time()+3600, "/wordpress/", "www.tora-soft.com");
 
 	        $txnid = 'LS' . $order_id . date("ymd");
 	  
