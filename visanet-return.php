@@ -7,6 +7,10 @@ if( isset($_COOKIE['woocommerce_cart_hash']) && isset($_COOKIE['woocommerce_orde
 		$order_key = $_COOKIE['woocommerce_order_key'];
 		$order_returnurl = $_COOKIE['woocommerce_order_returnurl'];
 
+		if(!empty($_COOKIE['woocommerce_order_id'])) unset($_COOKIE['woocommerce_order_id']);
+		if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']);
+		if(!empty($_COOKIE['woocommerce_order_returnurl'])) unset($_COOKIE['woocommerce_order_returnurl']);
+
     	echo '<form action="' . $order_returnurl . '" method="post" id="visanet_return_form">
             <input type="hidden" name="IDCOMMERCE" value="' . $_POST['IDCOMMERCE'] . '"/>
             <input type="hidden" name="IDACQUIRER" value="' . $_POST['IDACQUIRER'] . '"/>

@@ -270,28 +270,28 @@ function woocommerce_visanet_init(){
 
  			$this->VPOSSend( $array_send, $array_get, $this->llaveVPOSCryptoPublica, $this->llaveComercioFirmaPrivada, substr($this->vector, 0, 16) );
 
-			// wc_enqueue_js( '
-			// 	$.blockUI({
-			// 			message: "' . esc_js( __( 'Gracias por su compra. Ahora lo vamos a redireccionar a VisaNet donde ud puede realizar el pago de manera segura.', 'woocommerce' ) ) . '",
-			// 			baseZ: 99999,
-			// 			overlayCSS:
-			// 			{
-			// 				background: "#fff",
-			// 				opacity: 0.6
-			// 			},
-			// 			css: {
-			// 				padding:        "20px",
-			// 				zindex:         "9999999",
-			// 				textAlign:      "center",
-			// 				color:          "#555",
-			// 				border:         "3px solid #aaa",
-			// 				backgroundColor:"#fff",
-			// 				cursor:         "wait",
-			// 				lineHeight:		"24px",
-			// 			}
-			// 		});
-			// 	jQuery("#submit_visanet_payment_form").click();
-			// ');
+			wc_enqueue_js( '
+				$.blockUI({
+						message: "' . esc_js( __( 'Gracias por su compra. Ahora lo vamos a redireccionar a VisaNet donde ud puede realizar el pago de manera segura.', 'woocommerce' ) ) . '",
+						baseZ: 99999,
+						overlayCSS:
+						{
+							background: "#fff",
+							opacity: 0.6
+						},
+						css: {
+							padding:        "20px",
+							zindex:         "9999999",
+							textAlign:      "center",
+							color:          "#555",
+							border:         "3px solid #aaa",
+							backgroundColor:"#fff",
+							cursor:         "wait",
+							lineHeight:		"24px",
+						}
+					});
+				jQuery("#submit_visanet_payment_form").click();
+			');
 
 			if ( 'yes' == $this->debug ) {
 				$this->log->add( 'visanet', 'Enviando formulario de orden para orden ' . $order_id . ' - ' . $txnid );
@@ -350,8 +350,13 @@ function woocommerce_visanet_init(){
 
 			if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
 				//La salida esta en $arrayOut con todos los parametros decifrados devueltos por el VPOS 
-				$resultadoAutorizacion = $arrayOut['authorizationResult'];
-				$codigoAutorizacion    = $arrayOut['authorizationCode'];
+				if(isset($arrayOut['authorizationResult'])){
+					$resultadoAutorizacion = $arrayOut['authorizationResult'];
+				}
+				if(isset($arrayOut['authorizationCode'])){
+					$codigoAutorizacion    = $arrayOut['authorizationCode'];
+				}
+				
 
 				if ( 'yes' == $this->debug ) {
 					$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut) );
@@ -360,14 +365,14 @@ function woocommerce_visanet_init(){
 				if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
 
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Error: Transaccion rechazada.' );
+						$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
 					}
 					// Put this order on-hold for manual checking
-					if ($resultadoAutorizacion != null){
-						$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada. | ' . $resultadoAutorizacion, 'woocommerce' ) );
-					}else{
-						$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada. | ' . $resultadoAutorizacion, 'woocommerce' ) );
-
+					if ($resultadoAutorizacion != null && $resultadoAutorizacion != '05'){
+						$order->update_status( 'on-hold',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+					}
+					if ($resultadoAutorizacion == '05'){
+						$order->update_status( 'cancelled',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 					}
 
 					return true;
