@@ -348,24 +348,33 @@ function woocommerce_visanet_init(){
 			$arrayOut = array();
 
 			if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
-				//La salida esta en $arrayOut con todos los parámetros decifrados devueltos por el VPOS 
-				$arrayOut['authorizationResult']= $resultadoAutorizacion; 
-				$arrayOut['authorizationCode']= $codigoAutorizacion;		
+				//La salida esta en $arrayOut con todos los parametros decifrados devueltos por el VPOS 
+				$arrayOut['authorizationResult'] = $resultadoAutorizacion; 
+				$arrayOut['authorizationCode']	 = $codigoAutorizacion;		
+
+				$resultadoAutorizacion = $arrayOut['authorizationResult'];
+				$codigoAutorizacion    = $arrayOut['authorizationCode'];
+
+				if ( 'yes' == $this->debug ) {
+					$this->log->add( 'visanet', 'Resultado de la transaccion: ' . print_r($arrayOut) );
+				}
 
 				if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
 
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Error: Transaccion aceptada.' );
+						$this->log->add( 'visanet', 'Error: Transaccion rechazada.' );
 					}
 
-					// Put this order on-hold for manual checking
-					//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
+
 					return true;
 
 				} else {
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Pago completo.' );
+						$this->log->add( 'visanet', 'Error Transaccion Rechazada: ' .  );
 					}
+					// Put this order on-hold for manual checking
+					//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
+
 					// Store PP Details
 					//update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
 
