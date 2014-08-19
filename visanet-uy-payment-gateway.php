@@ -335,7 +335,7 @@ function woocommerce_visanet_init(){
 			if( isset($_POST['order_id']) ){
 
 				if ( 'yes' == $this->debug ) {
-					$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet orden: ' . $_POST['order_id'] . '\nData: ' . json_encode($_POST) );
+					$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet orden: ' . $_POST['order_id'] );
 				}
 
 				$order = new WC_Order( $_POST['order_id'] );
@@ -361,7 +361,7 @@ function woocommerce_visanet_init(){
 					
 
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut) );
+						$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion  );
 					}
 
 					if ( $resultadoAutorizacion != '00' && $resultadoAutorizacion != '11') {
@@ -378,7 +378,7 @@ function woocommerce_visanet_init(){
 					} else {
 
 						if ( 'yes' == $this->debug ) {
-							$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut)  );
+							$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion   );
 						}
 
 						// Reduce stock levels
@@ -394,7 +394,6 @@ function woocommerce_visanet_init(){
 
 						$order->payment_complete();
 						$result = 'success';
-						$this->web_redirect($order->get_checkout_order_received_url());
 
 					}
 
@@ -407,6 +406,8 @@ function woocommerce_visanet_init(){
 						$this->log->add( 'visanet', 'Ha ocurrido un error, tal vez las llaves o vector esten mal configurados.' );
 					}
 					$result = 'failed';
+					
+					$order->update_status( 'failed',  __( 'Error! Hubo algun problema en la comunicación con VisaNet. Verifique que la configuración esta correcta.', 'woocommerce' ) );
 
 					$this->web_redirect($order->get_checkout_order_received_url());
 
