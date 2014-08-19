@@ -364,22 +364,30 @@ function woocommerce_visanet_init(){
 					if ( 'yes' == $this->debug ) {
 						$this->log->add( 'visanet', 'Error: Transaccion rechazada.' );
 					}
+					// Put this order on-hold for manual checking
+					if ($resultadoAutorizacion != null){
+						$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada. | ' . $resultadoAutorizacion, 'woocommerce' ) );
+					}else{
+						$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada. | ' . $resultadoAutorizacion, 'woocommerce' ) );
 
+					}
 
 					return true;
 
 				} else {
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Error Transaccion Rechazada: ' );
+						$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut)  );
 					}
-					// Put this order on-hold for manual checking
-					//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
 
+					// Reduce stock levels
+					$order->reduce_order_stock();
+
+					// Remove cart
+					$woocommerce->cart->empty_cart();
 					// Store PP Details
-					//update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
+					update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
 
-					//$order->add_order_note( __( 'Pago completo', 'woocommerce' ) );
-					//$order->payment_complete();
+					$order->payment_complete();
 					return true;
 				}
 
@@ -388,6 +396,9 @@ function woocommerce_visanet_init(){
 			}else{
 				//Puede haber un problema de mala configuración de las llaves, vector de
 				//inicializacion o el VPOS no ha enviado valores correctos 
+				if ( 'yes' == $this->debug ) {
+					$this->log->add( 'visanet', 'Ha ocurrido un error, tal vez las llaves o vector esten mal configurados.' );
+				}
 				return false;
 			}
 
