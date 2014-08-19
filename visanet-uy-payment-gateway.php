@@ -406,12 +406,20 @@ function woocommerce_visanet_init(){
 				$result = 'failed';
 			}
 
-			return array(
-				'result' 	=> $result,
-				'redirect'	=> $order->get_checkout_order_received_url()
-			);
+			$this->web_redirect($order->get_checkout_order_received_url());
 
 	    }
+
+		public function web_redirect($url){
+
+			echo "<html><head><script language=\"javascript\">
+				<!--
+				window.location=\"{$url}\";
+				//-->
+				</script>
+				</head><body><noscript><meta http-equiv=\"refresh\" content=\"0;url={$url}\"></noscript></body></html>";
+
+		}
 
 		public function thankyou_page($order_id) {
 
