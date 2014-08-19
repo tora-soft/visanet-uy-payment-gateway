@@ -1,6 +1,6 @@
 <?php
 
-if( isset($_COOKIE['woocommerce_cart_hash']) && isset($_COOKIE['woocommerce_order_id']) && isset($_COOKIE['woocommerce_order_key'])){
+if( isset($_COOKIE['woocommerce_order_id']) && isset($_COOKIE['woocommerce_order_key'])){
 	if(!isset($_GET['key']) && !empty($_COOKIE['woocommerce_order_id']) && !empty($_COOKIE['woocommerce_order_key'])){
 
 		$order_id = $_COOKIE['woocommerce_order_id'];
