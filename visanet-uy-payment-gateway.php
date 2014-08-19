@@ -834,26 +834,15 @@ function woocommerce_visanet_init(){
 				$arregloSalida[$nodoHijo->nodeName] = $nodoHijo->nodeValue;
 			}
 
-			while (($nodoHijo=$nodoHijo->nextSibling)!=null){
+			while (($nodoHijo=$nodoHijo->nextSibling)!=null) {
 				$i = 1;
-				if(strcmp($nodoHijo->nodeName,'taxes')==0){
-					if($nodoHijo->hasChildNodes()){
-						$nodoTax = $nodoHijo->firstChild;
-						$arregloSalida['tax_'.$i.'_name'] = $nodoTax->getAttribute('name');
-						$arregloSalida['tax_'.$i.'_amount'] = $nodoTax->getAttribute('amount');
-						$i++;
-					}
 
-					while (($nodoTax=$nodoTax->nextSibling)!=null) {
-						$arregloSalida['tax_'.$i.'_name'] = $nodoTax->getAttribute('name');
-						$arregloSalida['tax_'.$i.'_amount'] = $nodoTax->getAttribute('amount');
-						$i++;
-					}
-
-				}else{
 					$arregloSalida[$nodoHijo->nodeName] = $nodoHijo->nodeValue;
-				}
+				
+
+
 			}
+
 			return $arregloSalida;
 		}
 
