@@ -259,10 +259,10 @@ function woocommerce_visanet_init(){
 			setcookie("woocommerce_order_key", $return_url['query'], time()+3600, "/wordpress/", "www.tora-soft.com");
 			setcookie("woocommerce_order_returnurl", $order->get_checkout_order_received_url(), time()+3600, "/wordpress/", "www.tora-soft.com");
 
-			$suffix_order_id = uniqid(rand(10,1000),false);
-			$suffix_order_id = substr($suffix_order_id,rand(0,strlen($suffix_order_id) - 6),6);
+			// $suffix_order_id = uniqid(rand(10,1000),false);
+			// $suffix_order_id = substr($suffix_order_id,rand(0,strlen($suffix_order_id) - 6),6);
 
-	        $txnid = 'LS' . $order_id . $suffix_order_id;
+	        $txnid = 'LS' . $order_id . date("ymd");
 	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
