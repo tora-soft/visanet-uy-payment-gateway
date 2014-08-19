@@ -11,7 +11,7 @@ if( isset($_COOKIE['woocommerce_order_id']) && isset($_COOKIE['woocommerce_order
 		if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']);
 		if(!empty($_COOKIE['woocommerce_order_returnurl'])) unset($_COOKIE['woocommerce_order_returnurl']);
 
-    	echo '<form action="' . $order_returnurl . '" method="post" id="visanet_return_form">
+    	echo '<form action="' . str_replace("?key", "/?key", $order_returnurl) . '" method="post" id="visanet_return_form">
             <input type="hidden" name="IDCOMMERCE" value="' . $_POST['IDCOMMERCE'] . '"/>
             <input type="hidden" name="IDACQUIRER" value="' . $_POST['IDACQUIRER'] . '"/>
             <input type="hidden" name="XMLRES" value="' . $_POST['XMLRES'] . '"/>
