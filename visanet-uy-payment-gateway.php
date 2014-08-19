@@ -332,11 +332,11 @@ function woocommerce_visanet_init(){
 	    function check_response(){
 	    	global $woocommerce;
 
-			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ' . json_encode($_POST) );
-			}
-
 			if( isset($_POST['order_id']) ){
+
+				if ( 'yes' == $this->debug ) {
+					$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet orden: ' . $_POST['order_id'] . '\nData: ' . json_encode($_POST) );
+				}
 
 				$order = new WC_Order( $_POST['order_id'] );
 
@@ -350,7 +350,7 @@ function woocommerce_visanet_init(){
 
 				$arrayOut = array();
 
-				if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
+				if( $this->VPOSResponse( $arrayIn, $arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
 					//La salida esta en $arrayOut con todos los parametros decifrados devueltos por el VPOS 
 					if(isset($arrayOut['authorizationResult'])){
 						$resultadoAutorizacion = $arrayOut['authorizationResult'];
