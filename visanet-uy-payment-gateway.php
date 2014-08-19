@@ -251,7 +251,7 @@ function woocommerce_visanet_init(){
 			$return_url = parse_url($order->get_checkout_order_received_url());
 
 			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Guardando cookie ' . $order_id . ' - woocommerce_order_id: '.$order_id.'|woocommerce_order_key:'.$return_url  );
+				$this->log->add( 'visanet', 'Guardando cookie ' . $order_id . ' - woocommerce_order_id: '.$order_id.'|woocommerce_order_key:'.$return_url['query']  );
 			}
 
 			if(!empty($_COOKIE['woocommerce_order_id'])) unset($_COOKIE['woocommerce_order_id']);
