@@ -318,8 +318,6 @@ function woocommerce_visanet_init(){
 				$this->log->add( 'visanet', 'Procesando orden: ' . $order_id . ' - ' . time() . ' | checkout url ' . $order->get_checkout_payment_url( true ) . ' | return url ' . $order->get_checkout_order_received_url());
 			}
 
-			$order->update_status( 'on-hold',  __( 'Procesando pago via VisaNet ordern: ' . $order_id, 'woocommerce' ) );
-
 			return array(
 				'result' 	=> 'success',
 				'redirect'	=> $order->get_checkout_payment_url( true )
