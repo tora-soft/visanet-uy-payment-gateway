@@ -13,6 +13,7 @@ if( isset($_COOKIE['woocommerce_cart_hash']) && isset($_COOKIE['woocommerce_orde
             <input type="hidden" name="XMLRES" value="' . $_POST['XMLRES'] . '"/>
             <input type="hidden" name="DIGITALSIGN" value="' . $_POST['DIGITALSIGN'] . '"/>
             <input type="hidden" name="SESSIONKEY" value="' . $_POST['SESSIONKEY'] .'"/>
+            <input type="hidden" name="order_id" value="' . $order_id .'"/>
             <script type="text/javascript">{document.getElementById("visanet_return_form").submit();}</script>
             </form>';
 

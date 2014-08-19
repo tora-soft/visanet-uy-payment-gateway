@@ -336,6 +336,7 @@ function woocommerce_visanet_init(){
 				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
 			}
 
+			$order = new WC_Order( $_POST['order_id'] );
 
 			$arrayIn = array(
 				'IDCOMMERCE' => $_POST['IDCOMMERCE'],
@@ -349,9 +350,6 @@ function woocommerce_visanet_init(){
 
 			if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
 				//La salida esta en $arrayOut con todos los parametros decifrados devueltos por el VPOS 
-				$arrayOut['authorizationResult'] = $resultadoAutorizacion; 
-				$arrayOut['authorizationCode']	 = $codigoAutorizacion;		
-
 				$resultadoAutorizacion = $arrayOut['authorizationResult'];
 				$codigoAutorizacion    = $arrayOut['authorizationCode'];
 
