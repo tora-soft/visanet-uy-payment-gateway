@@ -364,7 +364,7 @@ function woocommerce_visanet_init(){
 						$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut) );
 					}
 
-					if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
+					if ( $resultadoAutorizacion != '00' && $resultadoAutorizacion != '11') {
 
 						if ( 'yes' == $this->debug ) {
 							$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
