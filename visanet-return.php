@@ -11,13 +11,13 @@ if( isset($_COOKIE['woocommerce_cart_hash']) && isset($_COOKIE['woocommerce_orde
 		$order_returnurl = $_COOKIE['woocommerce_order_returnurl'];
 		//$current_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-    	echo '<form action="' . $order_returnurl . '" method="post" id="visanet_return_form">
+    	echo 'return<form action="' . $order_returnurl . '" method="post" id="visanet_return_form">
             <input type="hidden" name="IDCOMMERCE" value="' . $_POST['IDCOMMERCE'] . '"/>
             <input type="hidden" name="IDACQUIRER" value="' . $_POST['IDACQUIRER'] . '"/>
             <input type="hidden" name="XMLRES" value="' . $_POST['XMLRES'] . '"/>
             <input type="hidden" name="DIGITALSIGN" value="' . $_POST['DIGITALSIGN'] . '"/>
             <input type="hidden" name="SESSIONKEY" value="' . $_POST['SESSIONKEY'] .'"/>
-            <input type="submit" class="button-alt" id="submit_visanet_payment_form" value="''" /> 
+            <input type="submit" class="button-alt" id="submit_visanet_payment_form" value="submit" /> 
             <script type="text/javascript">{document.getElementById("visanet_return_form").submit();}</script>
             </form>';
 
