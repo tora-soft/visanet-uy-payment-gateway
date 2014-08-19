@@ -387,7 +387,7 @@ function woocommerce_visanet_init(){
 						// Remove cart
 						$woocommerce->cart->empty_cart();
 
-						$order->update_status( 'completed',  __( 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] . ' | Tarjeta : ' . $arrayOut['cardNumber'], 'woocommerce' ) );
+						$order->update_status( 'completed',  __( 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 
 						// Store PP Details
 						update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
