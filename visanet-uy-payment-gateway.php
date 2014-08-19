@@ -1,8 +1,5 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) { 
-    exit; // Exit if accessed directly
-}
 /*
 Plugin Name: WooCommerce VisaNetUY Payment Gateway
 Plugin URI: http://www.tora-soft.com
@@ -53,10 +50,13 @@ function woocommerce_visanet_init(){
 			}
  
  			// Actions / Acciones
+         	add_action('init', array(&$this, 'check_response'));
+
+            add_action( 'woocommerce_api_wc_' . $this->id							, array( $this, 'check_response'  ));
          	
 			add_action( 'woocommerce_receipt_' . $this->id 							, array( $this, 'receipt_page'   ));
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id 	, array( $this, 'process_admin_options' ));
-            add_action( 'woocommerce_thankyou_' . $this->id							, array( $this, 'check_response'  ));
+            add_action( 'woocommerce_thankyou_' . $this->id							, array( $this, 'thankyou_page'  ));
 
 			// if ( ! $this->is_valid_for_use() ) {
 			// 	$this->enabled = false;
@@ -338,14 +338,14 @@ function woocommerce_visanet_init(){
 				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ' . json_encode($posted) );
 			}
 
-			$order = new WC_Order( $_POST['order_id'] );
+			$order = new WC_Order( $posted['order_id'] );
 
 			$arrayIn = array(
-				'IDCOMMERCE' => $_POST['IDCOMMERCE'],
-				'IDACQUIRER' => $_POST['IDACQUIRER'],
-				'XMLRES'	 => $_POST['XMLRES'],
-				'DIGITALSIGN'=> $_POST['DIGITALSIGN'],
-				'SESSIONKEY' => $_POST['SESSIONKEY']
+				'IDCOMMERCE' => $posted['IDCOMMERCE'],
+				'IDACQUIRER' => $posted['IDACQUIRER'],
+				'XMLRES'	 => $posted['XMLRES'],
+				'DIGITALSIGN'=> $posted['DIGITALSIGN'],
+				'SESSIONKEY' => $posted['SESSIONKEY']
 				);
 
 			$arrayOut = array();
@@ -376,13 +376,8 @@ function woocommerce_visanet_init(){
 					if ($resultadoAutorizacion == '05'){
 						$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 					}
+					$result = 'failed';
 		
-					return array(
-						'result' 	=> 'failed',
-						'redirect'	=> $order->get_checkout_order_received_url()
-					);
-
-
 				} else {
 					if ( 'yes' == $this->debug ) {
 						$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut)  );
@@ -400,7 +395,7 @@ function woocommerce_visanet_init(){
 					update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
 
 					$order->payment_complete();
-					return true;
+					$result = 'success';
 				}
 
 
@@ -411,10 +406,19 @@ function woocommerce_visanet_init(){
 				if ( 'yes' == $this->debug ) {
 					$this->log->add( 'visanet', 'Ha ocurrido un error, tal vez las llaves o vector esten mal configurados.' );
 				}
-				return false;
+				$result = 'failed';
 			}
 
+			return array(
+				'result' 	=> $result,
+				'redirect'	=> $order->get_checkout_order_received_url()
+			);
+
 	    }
+
+		public function thankyou_page($order_id) {
+
+		}
 
 	    function showMessage($content){
 			if ( 'yes' == $this->debug ) {
