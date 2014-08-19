@@ -257,8 +257,8 @@ function woocommerce_visanet_init(){
 			if(!empty($_COOKIE['woocommerce_order_id'])) unset($_COOKIE['woocommerce_order_id']);
 			if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']);
 
-			setcookie("woocommerce_order_id", $order_id );
-			setcookie("woocommerce_order_key", $return_url['query']);
+			setcookie("woocommerce_order_id", $order_id, $expire, "/");
+			setcookie("woocommerce_order_key", $return_url['query'], $expire, "/");
 
 	        $txnid = 'LS' . $order_id . date("ymd");
 	  
