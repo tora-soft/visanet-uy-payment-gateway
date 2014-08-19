@@ -335,78 +335,89 @@ function woocommerce_visanet_init(){
 				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ' . json_encode($posted) );
 			}
 
-			$order = new WC_Order( $posted['order_id'] );
+			if( isset($posted['order_id']) ){
 
-			$arrayIn = array(
-				'IDCOMMERCE' => $posted['IDCOMMERCE'],
-				'IDACQUIRER' => $posted['IDACQUIRER'],
-				'XMLRES'	 => $posted['XMLRES'],
-				'DIGITALSIGN'=> $posted['DIGITALSIGN'],
-				'SESSIONKEY' => $posted['SESSIONKEY']
-				);
+				$order = new WC_Order( $posted['order_id'] );
 
-			$arrayOut = array();
+				$arrayIn = array(
+					'IDCOMMERCE' => $posted['IDCOMMERCE'],
+					'IDACQUIRER' => $posted['IDACQUIRER'],
+					'XMLRES'	 => $posted['XMLRES'],
+					'DIGITALSIGN'=> $posted['DIGITALSIGN'],
+					'SESSIONKEY' => $posted['SESSIONKEY']
+					);
 
-			if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
-				//La salida esta en $arrayOut con todos los parametros decifrados devueltos por el VPOS 
-				if(isset($arrayOut['authorizationResult'])){
-					$resultadoAutorizacion = $arrayOut['authorizationResult'];
-				}
-				if(isset($arrayOut['authorizationCode'])){
-					$codigoAutorizacion    = $arrayOut['authorizationCode'];
-				}
-				
+				$arrayOut = array();
 
-				if ( 'yes' == $this->debug ) {
-					$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut) );
-				}
-
-				if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
+				if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
+					//La salida esta en $arrayOut con todos los parametros decifrados devueltos por el VPOS 
+					if(isset($arrayOut['authorizationResult'])){
+						$resultadoAutorizacion = $arrayOut['authorizationResult'];
+					}
+					if(isset($arrayOut['authorizationCode'])){
+						$codigoAutorizacion    = $arrayOut['authorizationCode'];
+					}
+					
 
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
+						$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut) );
 					}
-					// Put this order on-hold for manual checking
-					if ($resultadoAutorizacion != null && $resultadoAutorizacion != '05'){
-						$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+
+					if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
+
+						if ( 'yes' == $this->debug ) {
+							$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
+						}
+						// Put this order on-hold for manual checking
+						if ($resultadoAutorizacion != null && $resultadoAutorizacion != '05'){
+							$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+						}
+						if ($resultadoAutorizacion == '05'){
+							$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+						}
+						$result = 'failed';
+						$this->web_redirect($order->get_checkout_order_received_url());
+
+			
+					} else {
+						if ( 'yes' == $this->debug ) {
+							$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut)  );
+						}
+
+						// Reduce stock levels
+						$order->reduce_order_stock();
+
+						// Remove cart
+						$woocommerce->cart->empty_cart();
+
+						$order->update_status( 'completed',  __( 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] . ' | Tarjeta : ' . $arrayOut['cardNumber'], 'woocommerce' ) );
+
+						// Store PP Details
+						update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
+
+						$order->payment_complete();
+						$result = 'success';
+						$this->web_redirect($order->get_checkout_order_received_url());
+
 					}
-					if ($resultadoAutorizacion == '05'){
-						$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+
+
+
+				}else{
+					//Puede haber un problema de mala configuración de las llaves, vector de
+					//inicializacion o el VPOS no ha enviado valores correctos 
+					if ( 'yes' == $this->debug ) {
+						$this->log->add( 'visanet', 'Ha ocurrido un error, tal vez las llaves o vector esten mal configurados.' );
 					}
 					$result = 'failed';
-		
-				} else {
-					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut)  );
-					}
 
-					// Reduce stock levels
-					$order->reduce_order_stock();
+					$this->web_redirect($order->get_checkout_order_received_url());
 
-					// Remove cart
-					$woocommerce->cart->empty_cart();
-
-					$order->update_status( 'completed',  __( 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] . ' | Tarjeta : ' . $arrayOut['cardNumber'], 'woocommerce' ) );
-
-					// Store PP Details
-					update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
-
-					$order->payment_complete();
-					$result = 'success';
 				}
 
 
-
-			}else{
-				//Puede haber un problema de mala configuración de las llaves, vector de
-				//inicializacion o el VPOS no ha enviado valores correctos 
-				if ( 'yes' == $this->debug ) {
-					$this->log->add( 'visanet', 'Ha ocurrido un error, tal vez las llaves o vector esten mal configurados.' );
-				}
-				$result = 'failed';
 			}
 
-			$this->web_redirect($order->get_checkout_order_received_url());
 
 	    }
 
