@@ -370,7 +370,7 @@ function woocommerce_visanet_init(){
 
 				} else {
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Error Transaccion Rechazada: ' .  );
+						$this->log->add( 'visanet', 'Error Transaccion Rechazada: ' );
 					}
 					// Put this order on-hold for manual checking
 					//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
