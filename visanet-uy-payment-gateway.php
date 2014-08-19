@@ -369,18 +369,14 @@ function woocommerce_visanet_init(){
 						if ( 'yes' == $this->debug ) {
 							$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
 						}
-						// Put this order on-hold for manual checking
-						if ($resultadoAutorizacion != null && $resultadoAutorizacion != '05'){
-							$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
-						}
-						if ($resultadoAutorizacion == '05'){
-							$order->update_status( 'cancelled',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
-						}
-						$result = 'cancelled';
-						$this->web_redirect($order->get_checkout_order_received_url());
+						$order->update_status( 'cancelled',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 
+						$result = 'cancelled';
+
+						$this->web_redirect($order->get_checkout_order_received_url());
 			
 					} else {
+
 						if ( 'yes' == $this->debug ) {
 							$this->log->add( 'visanet', 'Pago Completado: ' . $resultadoAutorizacion .' - ' . json_encode($arrayOut)  );
 						}
@@ -416,9 +412,7 @@ function woocommerce_visanet_init(){
 
 				}
 
-
 			}
-
 
 	    }
 
