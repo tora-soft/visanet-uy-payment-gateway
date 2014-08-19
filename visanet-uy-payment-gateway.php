@@ -369,9 +369,9 @@ function woocommerce_visanet_init(){
 						if ( 'yes' == $this->debug ) {
 							$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
 						}
-						$order->update_status( 'cancelled',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+						$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 
-						$result = 'cancelled';
+						$result = 'failed';
 
 						$this->web_redirect($order->get_checkout_order_received_url());
 			
