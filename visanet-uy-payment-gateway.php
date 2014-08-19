@@ -336,60 +336,51 @@ function woocommerce_visanet_init(){
 				$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet ');
 			}
 
-			if ( isset($_POST['IDCOMMERCE']) ){
-				return 'gracias';
-			} else {
-				return 'blah';
+
+			$arrayIn = array(
+				'IDCOMMERCE' => $_POST['IDCOMMERCE'],
+				'IDACQUIRER' => $_POST['IDACQUIRER'],
+				'XMLRES'	 => $_POST['XMLRES'],
+				'DIGITALSIGN'=> $_POST['DIGITALSIGN'],
+				'SESSIONKEY' => $_POST['SESSIONKEY']
+				);
+
+			$arrayOut = array();
+
+			if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
+				//La salida esta en $arrayOut con todos los parámetros decifrados devueltos por el VPOS 
+				$arrayOut['authorizationResult']= $resultadoAutorizacion; 
+				$arrayOut['authorizationCode']= $codigoAutorizacion;		
+
+				if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
+
+					if ( 'yes' == $this->debug ) {
+						$this->log->add( 'visanet', 'Error: Transaccion aceptada.' );
+					}
+
+					// Put this order on-hold for manual checking
+					//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
+					return true;
+
+				} else {
+					if ( 'yes' == $this->debug ) {
+						$this->log->add( 'visanet', 'Pago completo.' );
+					}
+					// Store PP Details
+					//update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
+
+					//$order->add_order_note( __( 'Pago completo', 'woocommerce' ) );
+					//$order->payment_complete();
+					return true;
+				}
+
+
+
+			}else{
+				//Puede haber un problema de mala configuración de las llaves, vector de
+				//inicializacion o el VPOS no ha enviado valores correctos 
+				return false;
 			}
-			// $arrayIn = array(
-			// 	'IDCOMMERCE' => $_POST['IDCOMMERCE'],
-			// 	'IDACQUIRER' => $_POST['IDACQUIRER'],
-			// 	'XMLRES'	 => $_POST['XMLRES'],
-			// 	'DIGITALSIGN'=> $_POST['DIGITALSIGN'],
-			// 	'SESSIONKEY' => $_POST['SESSIONKEY']
-			// 	);
-
-			// $arrayOut = array();
-
-			// if( $this->VPOSResponse($arrayIn,$arrayOut, $this->llaveVPOSFirmaPublica, $this->llaveComercioCryptoPrivada, $this->vector) ){
-			// 	//La salida esta en $arrayOut con todos los parámetros decifrados devueltos por el VPOS 
-			// 	$arrayOut['authorizationResult']= $resultadoAutorizacion; 
-			// 	$arrayOut['authorizationCode']= $codigoAutorizacion;
-
-			// 	if ( 'yes' == $this->debug ) {
-			// 		$this->log->add( 'visanet', 'Error: Transaccion rechazada. arrayOut ' . var_dump($arrayOut) );
-			// 	}
-				
-
-			// 	if ( $resultadoAutorizacion != '00' || $resultadoAutorizacion != '11') {
-
-			// 		if ( 'yes' == $this->debug ) {
-			// 			$this->log->add( 'visanet', 'Error: Transaccion rechazada.' );
-			// 		}
-
-			// 		// Put this order on-hold for manual checking
-			// 		//$order->update_status( 'on-hold',  __( 'Error: Transaccion rechazada.', 'woocommerce' ) );
-			// 		return true;
-
-			// 	} else {
-			// 		if ( 'yes' == $this->debug ) {
-			// 			$this->log->add( 'visanet', 'Pago completo.' );
-			// 		}
-			// 		// Store PP Details
-			// 		//update_post_meta( $order->id, 'Transaction ID', wc_clean( $posted['tx'] ) );
-
-			// 		//$order->add_order_note( __( 'Pago completo', 'woocommerce' ) );
-			// 		//$order->payment_complete();
-			// 		return true;
-			// 	}
-
-
-
-			// }else{
-			// 	//Puede haber un problema de mala configuración de las llaves, vector de
-			// 	//inicializacion o el VPOS no ha enviado valores correctos 
-			// 	return false;
-			// }
 
 	    }
 
