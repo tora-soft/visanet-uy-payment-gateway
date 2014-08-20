@@ -228,9 +228,9 @@ function woocommerce_visanet_init(){
 			$array_send['billingFirstName']			= $order->billing_first_name; 
 			$array_send['billingLastName']			= $order->billing_last_name; 
 			$array_send['language']					= 'SP'; //En español
-			$array_send['reserved10']				= ''; 			
-			$array_send['reserved11']				= ''; 			
-			$array_send['reserved12']				= ''; 			
+			$array_send['reserved10']				= $this->leyInclusionFinanciera; 			
+			$array_send['reserved11']				= '00000000'; 			
+			$array_send['reserved12']				= 0; 			
 
 			$array_send = apply_filters( 'woocommerce_visanet_array_send', $array_send );
 
