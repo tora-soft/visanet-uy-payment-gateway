@@ -36,6 +36,7 @@ function woocommerce_visanet_init(){
 			$this->idacquirer 					= $this->get_option('idacquirer');
 			$this->idcommerce 					= $this->get_option('idcommerce');
 			$this->currency_code				= $this->get_option('currency_code');
+			$this->leyInclusionFinanciera		= $this->get_option('leyInclusionFinanciera');
 			$this->vector 						= $this->get_option('vector');
 			$this->llaveVPOSCryptoPublica 		= $this->get_option('llaveVPOSCryptoPublica');
 			$this->llaveVPOSFirmaPublica 		= $this->get_option('llaveVPOSFirmaPublica');
@@ -113,6 +114,16 @@ function woocommerce_visanet_init(){
                     'title' 	  => __('Moneda', 'woocommerce'),
                     'type' 		  => 'text',
                     'description' => __('Codigo ISO alfanumerico de 3 caracteres. Debe estar en las monedas permitidas para su comercio.')),
+                'leyInclusionFinanciera' => array(
+                    'title' 	  => __('Ley Inclusion Financiera 19210', 'woocommerce'),
+                    'type' 		  => 'select',
+                    'description' => __('Indicar si las ventas aplican o no a la ley de inclusion financiera 19210.')
+                    'options'     => array(
+                    		'0' => 'No aplica',
+                    		'6' => 'Aplica',
+                    		'4' => 'Reservado'
+                    	)
+                    ),
                 'vector' => array(
                     'title' 	  => __('Vector de inicializacion', 'woocommerce'),
                     'type' 		  => 'text',
@@ -216,7 +227,10 @@ function woocommerce_visanet_init(){
 			$array_send['billingEMail']				= $order->billing_email; 
 			$array_send['billingFirstName']			= $order->billing_first_name; 
 			$array_send['billingLastName']			= $order->billing_last_name; 
-			$array_send['language']					= 'SP'; //En español
+			$array_send['language']					= 'SP'; //En español
+			$array_send['reserved10']				= ''; 			
+			$array_send['reserved11']				= ''; 			
+			$array_send['reserved12']				= ''; 			
 
 			$array_send = apply_filters( 'woocommerce_visanet_array_send', $array_send );
 
