@@ -4,7 +4,7 @@
 Plugin Name: WooCommerce VisaNetUY Payment Gateway
 Plugin URI: http://www.tora-soft.com
 Description: VisaNetUY Payment gateway for woocommerce
-Version: 0.1.1
+Version: 1.0.0
 Author: Federico Giust
 Author URI: http://www.tora-soft.com
 */
@@ -44,26 +44,27 @@ function woocommerce_visanet_init(){
 			$this->testmode						= $this->get_option('testmode');
 			$this->debug						= $this->get_option('debug');
 
-			// Logs
+			// Logs - If enabled it will save a txt file in woocommerce/logs/
 			if ( 'yes' == $this->debug ) {
 				$this->log = new WC_Logger();
 			}
  
- 			// Actions / Acciones
-        	
+ 			// Actions
+
+ 			// Receipt page before redirecting to payment gateway
 			add_action( 'woocommerce_receipt_' . $this->id 							, array( $this, 'receipt_page'   ));
+			// Admin options - Generate the admin form 
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id 	, array( $this, 'process_admin_options' ));
             add_action( 'woocommerce_thankyou_' . $this->id							, array( $this, 'check_response'  ));
 
-			// if ( ! $this->is_valid_for_use() ) {
-			// 	$this->enabled = false;
-			// }
+			if ( ! $this->is_valid_for_use() ) {
+				$this->enabled = false;
+			}
 
    		}
 
 		/**
 		 * Check if this gateway is enabled and if the required fields have been filled. 
-		 * Chequear si el gateway esta habilitado y si los campos requeridos han sido completados.
 		 * @access public
 		 * @return bool
 		 */
@@ -77,7 +78,11 @@ function woocommerce_visanet_init(){
 			return true;
 		}
 
-
+		/**
+		* Initialize admin form fields for the user to configure the plugin.
+		* @access public
+		* @return void
+		*/
     	function init_form_fields(){
  
        		$this->form_fields = array(
@@ -150,6 +155,12 @@ function woocommerce_visanet_init(){
             );
     	}
  
+		/**
+		 * Output for the admin options page.
+		 *
+		 * @access public
+		 * @return void
+		 */ 	
        	public function admin_options(){
 	        echo '<h3>'.__('Modulo de pagos VisaNet UY', 'woocommerce').'</h3>';
 	        echo '<p>'.__('').'</p>';
@@ -164,6 +175,7 @@ function woocommerce_visanet_init(){
 		 * Output for the order received page.
 		 *
 		 * @access public
+		 * @param object $order
 		 * @return void
 		 */
     	function receipt_page( $order ){
@@ -174,6 +186,14 @@ function woocommerce_visanet_init(){
         	echo $this->generate_visanet_form( $order );
     	}
 
+		/**
+		 * Generate array_send with arguments to be passed on later to VPOSSend.
+		 *
+		 * @access public
+		 * @param object $order
+		 * @param string $txnid
+		 * @return $array_send
+		 */
 
     	function get_array_send($order, $txnid){
 
@@ -204,6 +224,14 @@ function woocommerce_visanet_init(){
 
     	}
 
+		/**
+		 * Generate array_get empty to be passed on later to VPOSSend.
+		 *
+		 * @access public
+		 * @param object $order
+		 * @return $array_get
+		 */
+
     	function get_array_get( $order ){
 
 			if ( 'yes' == $this->debug ) {
@@ -222,7 +250,11 @@ function woocommerce_visanet_init(){
 
 
 	    /**
-	     * Generate visanet button link
+	     * Generate visanet POST form
+	     * 
+	     * @access public
+	     * @param string $order_id
+	     * @return form and make post to redirect to VisaNet
 	     **/
 	    public function generate_visanet_form($order_id){
  
@@ -259,10 +291,11 @@ function woocommerce_visanet_init(){
 			setcookie("woocommerce_order_key", $return_url['query'], time()+3600, "/wordpress/", "www.tora-soft.com");
 			setcookie("woocommerce_order_returnurl", $order->get_checkout_order_received_url(), time()+3600, "/wordpress/", "www.tora-soft.com");
 
-			// $suffix_order_id = uniqid(rand(10,1000),false);
-			// $suffix_order_id = substr($suffix_order_id,rand(0,strlen($suffix_order_id) - 6),6);
+			$suffix_order_id = uniqid(rand(10,1000),false);
+			$suffix_order_id = substr($suffix_order_id,rand(0,strlen($suffix_order_id) - 6),6);
 
-	        $txnid = 'LS' . $order_id . date("ymd");
+	        //$txnid = 'LS' . $order_id . date("ymd");
+	        $txnid = 'LS' . $order_id . $suffix_order_id;
 	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
@@ -308,7 +341,11 @@ function woocommerce_visanet_init(){
 	    }
 
 	    /**
-	     * Process the payment and return the result
+	     * Process the payment 
+	     * 
+	     * @access public
+	     * @param string $order_id
+	     * @return array
 	     **/
 	    function process_payment($order_id){
 			
@@ -326,7 +363,10 @@ function woocommerce_visanet_init(){
 	    }
  
 	    /**
-	     * Check for valid visanet server callback
+	     * Check for visanet response
+	     * 
+	     * @access public
+	     * @return transaction result and thank you page
 	     **/
  
 	    function check_response(){
@@ -417,6 +457,13 @@ function woocommerce_visanet_init(){
 
 	    }
 
+	    /**
+	     * Make a redirect when needed 
+	     * 
+	     * @access public
+	     * @param string $url
+	     * @return redirect
+	     */
 		public function web_redirect($url){
 
 			echo "<html><head><script language=\"javascript\">
@@ -432,37 +479,12 @@ function woocommerce_visanet_init(){
 
 		}
 
-	    function showMessage($content){
-			if ( 'yes' == $this->debug ) {
-				$this->log->add( 'visanet', 'Mostrando mensaje:  ' . $content );
-			}
-            return '<div class="box '.$this->msg['class'].'-box">'.$this->msg['message'].'</div>'.$content;
-        }
-    
-	    // get all pages
-	    function get_pages($title = false, $indent = true) {
+		/**
+		 * VPOS Plugin provided by VisaNet 
+		 * Converted into class by Federico Giust
+		 **/
 
-	        $wp_pages = get_pages('sort_column=menu_order');
-	        $page_list = array();
-	        if ($title) $page_list[] = $title;
-	        foreach ($wp_pages as $page) {
-	            $prefix = '';
-	            // show indented child pages?
-	            if ($indent) {
-	                $has_parent = $page->post_parent;
-	                while($has_parent) {
-	                    $prefix .=  ' - ';
-	                    $next_page = get_page($has_parent);
-	                    $has_parent = $next_page->post_parent;
-	                }
-	            }
-	            // add to page list array array
-	            $page_list[$page->ID] = $prefix . $page->post_title;
-	        }
-	        return $page_list;
-	    }
-
-		function createXMLPHP5($arreglo){
+   		function createXMLPHP5($arreglo){
 
 			$camposValidos_envio = array(
 				'acquirerId',
@@ -876,6 +898,7 @@ function woocommerce_visanet_init(){
 			return $arregloSalida;
 		}
 
+		// Ends VPOS Plugin provided by VisaNet
 
 	}
    	
