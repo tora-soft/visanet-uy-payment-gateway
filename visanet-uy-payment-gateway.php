@@ -117,7 +117,7 @@ function woocommerce_visanet_init(){
                 'leyInclusionFinanciera' => array(
                     'title' 	  => __('Ley Inclusion Financiera 19210', 'woocommerce'),
                     'type' 		  => 'select',
-                    'description' => __('Indicar si las ventas aplican o no a la ley de inclusion financiera 19210.')
+                    'description' => __('Indicar si las ventas aplican o no a la ley de inclusion financiera 19210.'),
                     'options'     => array(
                     		'0' => 'No aplica',
                     		'6' => 'Aplica',
