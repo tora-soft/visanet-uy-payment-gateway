@@ -60,7 +60,6 @@ function woocommerce_visanet_init(){
 
 			add_action( 'woocommerce_order_details_after_customer_details', 'display_custom_field', 10, 1 );
 
-
 			if ( ! $this->is_valid_for_use() ) {
 				$this->enabled = false;
 			}
@@ -181,7 +180,7 @@ function woocommerce_visanet_init(){
     	}
  
 		function display_custom_field($order){
-		    echo "<p><strong>Name of pickup person:</strong> " . $order->order_custom_fields['_billing_gls_name'][0] . "</p>";
+		    echo "<p><strong>Purchase Operation Number:</strong> " . get_post_meta( $order->id, '_visanet_purchase_operation_number', true ); . "</p>";
 		}
 
 
