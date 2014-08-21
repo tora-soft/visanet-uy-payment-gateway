@@ -385,7 +385,9 @@ function woocommerce_visanet_init(){
 					$this->log->add( 'visanet', 'Procesando la vuelta de VisaNet orden: ' . $_POST['order_id'] );
 				}
 
-				$order = new WC_Order( $_POST['order_id'] );
+				$order_id = $_POST['order_id'];
+
+				$order = new WC_Order( $order_id );
 
 				$arrayIn = array(
 					'IDCOMMERCE' => $_POST['IDCOMMERCE'],
@@ -408,17 +410,24 @@ function woocommerce_visanet_init(){
 					
 
 					if ( 'yes' == $this->debug ) {
-						$this->log->add( 'visanet', 'Resultado de la transaccion: ' . $resultadoAutorizacion  . ' | DATA : ' . json_encode($arrayOut));
+						$this->log->add( 'visanet', 'Transaccion : ' . wc_clean( $arrayOut['purchaseOperationNumber'] ) . ' | Resultado de la transaccion: ' . $resultadoAutorizacion  . ' | DATA : ' . json_encode($arrayOut));
 					}
 
 					if ( $resultadoAutorizacion != '00' && $resultadoAutorizacion != '11') {
 
 						if ( 'yes' == $this->debug ) {
-							$this->log->add( 'visanet', 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
+							$this->log->add( 'visanet', 'Transaccion : ' . wc_clean( $arrayOut['purchaseOperationNumber'] ) . ' | Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'] );
 						}
-						$order->update_status( 'failed',  __( 'Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+						$order->update_status( 'failed',  __( 'Transaccion : ' . wc_clean( $arrayOut['purchaseOperationNumber'] ) . ' | Error: ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 
 						$result = 'failed';
+
+						update_post_meta( $order_id, '_visanet_purchase_operation_number', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
+						update_post_meta( $order_id, '_visanet_purchase_amount', wc_clean( $arrayOut['purchaseAmount'] ) );
+						update_post_meta( $order_id, '_visanet_purchase_currency_code', wc_clean( $arrayOut['purchaseCurrencyCode'] ) );
+						update_post_meta( $order_id, '_visanet_authorizarion_result', wc_clean( $arrayOut['authorizationResult'] ) );
+						update_post_meta( $order_id, '_visanet_error_code', wc_clean( $arrayOut['errorCode'] ) );
+						update_post_meta( $order_id, '_visanet_error_message', wc_clean( $arrayOut['errorMessage'] ) );
 
 						$this->web_redirect($order->get_checkout_order_received_url());
 			
@@ -434,10 +443,16 @@ function woocommerce_visanet_init(){
 						// Remove cart
 						$woocommerce->cart->empty_cart();
 
-						$order->update_status( 'completed',  __( 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
+						$order->update_status( 'completed',  __( 'Transaccion : ' . wc_clean( $arrayOut['purchaseOperationNumber'] ) . 'Completa : ' . $resultadoAutorizacion . ' | ' . $arrayOut['errorCode'] . ' - ' . $arrayOut['errorMessage'], 'woocommerce' ) );
 
 						// Store PP Details
-						update_post_meta( $order->id, 'Transaccion : ', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
+						update_post_meta( $order_id, '_visanet_purchase_operation_number', wc_clean( $arrayOut['purchaseOperationNumber'] ) );
+						update_post_meta( $order_id, '_visanet_purchase_amount', wc_clean( $arrayOut['purchaseAmount'] ) );
+						update_post_meta( $order_id, '_visanet_purchase_currency_code', wc_clean( $arrayOut['purchaseCurrencyCode'] ) );
+						update_post_meta( $order_id, '_visanet_authorizarion_result', wc_clean( $arrayOut['authorizationResult'] ) );
+						update_post_meta( $order_id, '_visanet_authorizarion_code', wc_clean( $arrayOut['authorizationCode'] ) );
+						update_post_meta( $order_id, '_visanet_error_code', wc_clean( $arrayOut['errorCode'] ) );
+						update_post_meta( $order_id, '_visanet_error_message', wc_clean( $arrayOut['errorMessage'] ) );
 
 						$order->payment_complete();
 						$result = 'success';
@@ -455,6 +470,8 @@ function woocommerce_visanet_init(){
 					$result = 'failed';
 					
 					$order->update_status( 'failed',  __( 'Error! Hubo algun problema en la comunicación con VisaNet. Verifique que la configuración esta correcta.', 'woocommerce' ) );
+
+					update_post_meta( $order_id, '_visanet_error_message', 'Error! Hubo algun problema en la comunicación con VisaNet. Verifique que la configuración esta correcta.' );
 
 					$this->web_redirect($order->get_checkout_order_received_url());
 
