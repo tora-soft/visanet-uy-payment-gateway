@@ -21,6 +21,7 @@ function woocommerce_visanet_init(){
 			$this->id 					= 'visanet';
 			$this->method_title 		= __( 'VisaNet', 'woocommerce' );
 			$this->order_button_text 	= __( 'Ir a VisaNet', 'woocommerce' );
+			$this->icon             	= apply_filters( 'woocommerce_visanet_icon', plugins_url( '/assets/icons/visa.png', __FILE__) );
 			$this->testurl 				= 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do';
 			$this->liveurl 				= 'https://vpayment.verifika.com/VPOS/MM/transactionStart20.do';
 
