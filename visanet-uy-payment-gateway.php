@@ -4,7 +4,7 @@
 Plugin Name: WooCommerce VisaNetUY Payment Gateway
 Plugin URI: http://www.tora-soft.com
 Description: VisaNetUY Payment gateway for woocommerce
-Version: 1.0.0
+Version: 1.0.1
 Author: Federico Giust
 Author URI: http://www.tora-soft.com
 */
@@ -287,15 +287,15 @@ function woocommerce_visanet_init(){
 			if(!empty($_COOKIE['woocommerce_order_key'])) unset($_COOKIE['woocommerce_order_key']);
 			if(!empty($_COOKIE['woocommerce_order_returnurl'])) unset($_COOKIE['woocommerce_order_returnurl']);
 
-			setcookie("woocommerce_order_id", $order_id, time()+3600, "/wordpress/", "www.tora-soft.com");
-			setcookie("woocommerce_order_key", $return_url['query'], time()+3600, "/wordpress/", "www.tora-soft.com");
-			setcookie("woocommerce_order_returnurl", $order->get_checkout_order_received_url(), time()+3600, "/wordpress/", "www.tora-soft.com");
+			setcookie("woocommerce_order_id", $order_id, time()+3600, "/", $_SERVER['SERVER_NAME']);
+			setcookie("woocommerce_order_key", $return_url['query'], time()+3600, "/", $_SERVER['SERVER_NAME']);
+			setcookie("woocommerce_order_returnurl", $order->get_checkout_order_received_url(), time()+3600, "/", $_SERVER['SERVER_NAME']);
 
 			$suffix_order_id = uniqid(rand(10,1000),false);
 			$suffix_order_id = substr($suffix_order_id,rand(0,strlen($suffix_order_id) - 6),6);
 
 	        //$txnid = 'LS' . $order_id . date("ymd");
-	        $txnid = 'LS' . $order_id . $suffix_order_id;
+	        $txnid = $order_id . $suffix_order_id;
 	  
 	 		$array_send = $this->get_array_send( $order, $txnid );
 
