@@ -141,7 +141,7 @@ $order = new WC_Order( $order_id );
 	</div><!-- /.col-2 -->
 
 </div><!-- /.col2-set -->
-uckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuck
-<?php endif; ?>
 
+<?php endif; ?>
+uckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuckuck
 <div class="clear"></div>
