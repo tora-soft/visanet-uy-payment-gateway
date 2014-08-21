@@ -20,7 +20,6 @@ function woocommerce_visanet_init(){
 		
 			$this->id 					= 'visanet';
 			$this->method_title 		= __( 'VisaNet', 'woocommerce' );
-			$this->order_button_text 	= __( 'Ir a VisaNet', 'woocommerce' );
 			$this->icon             	= apply_filters( 'woocommerce_visanet_icon', plugins_url( '/assets/icons/visa.png', __FILE__) );
 			$this->testurl 				= 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do';
 			$this->liveurl 				= 'https://vpayment.verifika.com/VPOS/MM/transactionStart20.do';
@@ -32,6 +31,7 @@ function woocommerce_visanet_init(){
 			$this->init_settings();
 
 			// Define user set variables
+			$this->order_button_text 			= $this->get_option('order_button_text');
 			$this->title 						= $this->get_option('title');
 			$this->description 					= $this->get_option('description');
 			$this->idacquirer 					= $this->get_option('idacquirer');
@@ -102,6 +102,12 @@ function woocommerce_visanet_init(){
                     'type'        => 'textarea',
                     'description' => __('Esto controla la descripción del metodo de pago que ve el usuario durante el checkout.', 'woocommerce'),
                     'default'     => __('Pague seguro con tarjeta de credito o de debito a travez de VisaNet.', 'woocommerce')),
+                'order_button_text' => array(
+                	'title' 	  => __('Boton de pago', 'woocommerce'),
+                	'type'		  => 'text',
+                	'description' => __('La etiqueta del boton de pago que ve el usuario.', 'woocommerce'),
+                	'default'     => __('Ir a VisaNet', 'woocommerce')
+                	),
                 'idacquirer' => array(
                     'title'       => __('ID Acquirer', 'woocommerce'),
                     'type' 		  => 'text',
