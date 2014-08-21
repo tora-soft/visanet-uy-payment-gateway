@@ -58,7 +58,8 @@ function woocommerce_visanet_init(){
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id 	, array( $this, 'process_admin_options' ));
             add_action( 'woocommerce_thankyou_' . $this->id							, array( $this, 'check_response'  ));
 
-			add_action( 'woocommerce_admin_order_data_after_billing_address', 'display_custom_field');
+			add_action( 'woocommerce_order_details_after_customer_details', 'display_custom_field', 10, 1 );
+
 
 			if ( ! $this->is_valid_for_use() ) {
 				$this->enabled = false;
@@ -180,7 +181,7 @@ function woocommerce_visanet_init(){
     	}
  
 		function display_custom_field($order){
-		    echo "<p><strong>Transaction:</strong> " . $order->order_custom_fields['_visanet_purchase_operation_number'][0] . "</p>";
+		    echo "<p><strong>Name of pickup person:</strong> " . $order->order_custom_fields['_billing_gls_name'][0] . "</p>";
 		}
 
 
