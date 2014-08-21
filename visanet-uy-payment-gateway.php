@@ -4,7 +4,7 @@
 Plugin Name: WooCommerce VisaNetUY Payment Gateway
 Plugin URI: http://www.tora-soft.com
 Description: VisaNetUY Payment gateway for woocommerce
-Version: 1.0.1
+Version: 1.0.2
 Author: Federico Giust
 Author URI: http://www.tora-soft.com
 */
