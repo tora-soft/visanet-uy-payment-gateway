@@ -180,7 +180,7 @@ function woocommerce_visanet_init(){
     	}
  
 		function display_custom_field($order){
-		    echo "<p><strong>Purchase Operation Number:</strong> " . get_post_meta( $order->id, '_visanet_purchase_operation_number', true ); . "</p>";
+		    echo "<p><strong>Purchase Operation Number:</strong> " . get_post_meta( $order->id, '_visanet_purchase_operation_number', true ) . "</p>";
 		}
 
 
